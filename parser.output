@@ -1,0 +1,200 @@
+Gramática
+
+    0 $accept: input $end
+
+    1 input: ε
+    2      | input line
+
+    3 line: '\n'
+    4     | exp '\n'
+
+    5 exp: NUM
+    6    | exp exp "+"
+    7    | exp exp "-"
+    8    | exp exp "*"
+    9    | exp exp "/"
+   10    | exp exp "**"
+   11    | exp "+="
+   12    | exp "=+"
+
+
+Terminales con las reglas donde aparecen
+
+    $end (0) 0
+    '\n' (10) 3 4
+    error (256)
+    NUM <num> (258) 5
+    "+" (259) 6
+    "-" (260) 7
+    "*" (261) 8
+    "/" (262) 9
+    "**" (263) 10
+    "=+" (264) 12
+    "+=" (265) 11
+
+
+No terminales con las reglas donde aparecen
+
+    $accept (12)
+        on left: 0
+    input (13)
+        on left: 1 2
+        on right: 0 2
+    line (14)
+        on left: 3 4
+        on right: 2
+    exp <num> (15)
+        on left: 5 6 7 8 9 10 11 12
+        on right: 4 6 7 8 9 10 11 12
+
+
+Estado 0
+
+    0 $accept: • input $end
+
+    $default  reduce usando la regla 1 (input)
+
+    input  ir al estado 1
+
+
+Estado 1
+
+    0 $accept: input • $end
+    2 input: input • line
+
+    $end  desplazar e ir al estado 2
+    NUM   desplazar e ir al estado 3
+    '\n'  desplazar e ir al estado 4
+
+    line  ir al estado 5
+    exp   ir al estado 6
+
+
+Estado 2
+
+    0 $accept: input $end •
+
+    $default  aceptar
+
+
+Estado 3
+
+    5 exp: NUM •
+
+    $default  reduce usando la regla 5 (exp)
+
+
+Estado 4
+
+    3 line: '\n' •
+
+    $default  reduce usando la regla 3 (line)
+
+
+Estado 5
+
+    2 input: input line •
+
+    $default  reduce usando la regla 2 (input)
+
+
+Estado 6
+
+    4 line: exp • '\n'
+    6 exp: exp • exp "+"
+    7    | exp • exp "-"
+    8    | exp • exp "*"
+    9    | exp • exp "/"
+   10    | exp • exp "**"
+   11    | exp • "+="
+   12    | exp • "=+"
+
+    NUM   desplazar e ir al estado 3
+    "=+"  desplazar e ir al estado 7
+    "+="  desplazar e ir al estado 8
+    '\n'  desplazar e ir al estado 9
+
+    exp  ir al estado 10
+
+
+Estado 7
+
+   12 exp: exp "=+" •
+
+    $default  reduce usando la regla 12 (exp)
+
+
+Estado 8
+
+   11 exp: exp "+=" •
+
+    $default  reduce usando la regla 11 (exp)
+
+
+Estado 9
+
+    4 line: exp '\n' •
+
+    $default  reduce usando la regla 4 (line)
+
+
+Estado 10
+
+    6 exp: exp • exp "+"
+    6    | exp exp • "+"
+    7    | exp • exp "-"
+    7    | exp exp • "-"
+    8    | exp • exp "*"
+    8    | exp exp • "*"
+    9    | exp • exp "/"
+    9    | exp exp • "/"
+   10    | exp • exp "**"
+   10    | exp exp • "**"
+   11    | exp • "+="
+   12    | exp • "=+"
+
+    NUM   desplazar e ir al estado 3
+    "+"   desplazar e ir al estado 11
+    "-"   desplazar e ir al estado 12
+    "*"   desplazar e ir al estado 13
+    "/"   desplazar e ir al estado 14
+    "**"  desplazar e ir al estado 15
+    "=+"  desplazar e ir al estado 7
+    "+="  desplazar e ir al estado 8
+
+    exp  ir al estado 10
+
+
+Estado 11
+
+    6 exp: exp exp "+" •
+
+    $default  reduce usando la regla 6 (exp)
+
+
+Estado 12
+
+    7 exp: exp exp "-" •
+
+    $default  reduce usando la regla 7 (exp)
+
+
+Estado 13
+
+    8 exp: exp exp "*" •
+
+    $default  reduce usando la regla 8 (exp)
+
+
+Estado 14
+
+    9 exp: exp exp "/" •
+
+    $default  reduce usando la regla 9 (exp)
+
+
+Estado 15
+
+   10 exp: exp exp "**" •
+
+    $default  reduce usando la regla 10 (exp)
