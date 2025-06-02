@@ -1,0 +1,7 @@
+El lenguaje tendra notacion postorden para las operaciones aritmeticas
+
+El lenguaje usara un unordered_map para el manejo de variables
+    -cada variable es un objeto con las variables type y value.
+    -las variables no poseen nombre, debido a que este lo maneja el hashmap 
+     acceder a ella nada mas.
+Se define la clase symbol que describe una variable de cualquier tipo, luego, en funcion del tipo se instanciara un obejto de la clase symbol_tipo, y en el constructor de esta clase secundaria es donde se llevara a cabo la insercion en el hashmap.
