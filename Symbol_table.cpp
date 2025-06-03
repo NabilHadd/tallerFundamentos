@@ -15,7 +15,7 @@ void Symbol_table::insert(const std::string& name, std::unique_ptr<Symbol_base> 
 void Symbol_table::update(const std::string& name, std::unique_ptr<Symbol_base> symbol){
     auto it  = table.find(name);
     if(it != table.end()){
-        it->second = symbol;//sera necesario usar variant?
+        it->second = std::move(symbol);//sera necesario usar variant?
     }
     
 }
