@@ -105,9 +105,11 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
 #include <math.h>
 #include "Symbol_table.h"
 #include "errors.h"
+extern "C" int yylex();
+Symbol_table table;
 
 
-#line 10 "parser.y"
+#line 12 "parser.y"
 typedef union {
     Symbol_base* var;
     double num;
@@ -541,8 +543,8 @@ static const short yyrhs[] = {    -1,
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    42,    43,    46,    48,    49,    50,    51,    52,    55,    59,
-    66
+    44,    45,    48,    50,    51,    52,    53,    54,    57,    61,
+    68
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","NUM","VAR",
@@ -1097,29 +1099,29 @@ YYLABEL(yyreduce)
   switch (yyn) {
 
 case 5:
-#line 49 "parser.y"
+#line 51 "parser.y"
 { std::cout << "print" << std::endl; ;
     break;}
 case 6:
-#line 50 "parser.y"
-{table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_INT, yyvsp[-1].var);;
+#line 52 "parser.y"
+{table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_INT, yyvsp[-1].var));;
     break;}
 case 7:
-#line 51 "parser.y"
+#line 53 "parser.y"
 {table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, yyvsp[-1].var));;
     break;}
 case 8:
-#line 52 "parser.y"
+#line 54 "parser.y"
 {table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_BOOL, yyvsp[-1].var));;
     break;}
 case 9:
-#line 56 "parser.y"
+#line 58 "parser.y"
 { 
         yyval.var = new Symbol_base(Type::TYPE_DOUBLE, yyvsp[0].num);                
     ;
     break;}
 case 10:
-#line 59 "parser.y"
+#line 61 "parser.y"
 { 
         Symbol_base* aux = table.get(yyvsp[0].str);
         Value v = aux->get_value();
@@ -1129,20 +1131,20 @@ case 10:
     ;
     break;}
 case 11:
-#line 66 "parser.y"
+#line 68 "parser.y"
 {
-        if (yyvsp[-2].var->type == Type::TYPE_INT && yyvsp[-1].var->type == Type::TYPE_INT){
+        if (yyvsp[-2].var->get_type() == Type::TYPE_INT && yyvsp[-1].var->get_type() == Type::TYPE_INT){
             int a = std::get<int>(yyvsp[-2].var->get_value());
             int b = std::get<int>(yyvsp[-1].var->get_value());
             int res = a + b;
             yyval.var = new Symbol_base(Type::TYPE_INT, res);
 
-        } else if(yyvsp[-2].var->type == Type::TYPE_DOUBLE && yyvsp[-1].var->type == Type::TYPE_INT){
+        } else if(yyvsp[-2].var->get_type() == Type::TYPE_DOUBLE && yyvsp[-1].var->get_type() == Type::TYPE_INT){
             double a = std::get<double>(yyvsp[-2].var->get_value());
             int b = std::get<int>(yyvsp[-1].var->get_value());
             double res = a + b;
             yyval.var = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if(yyvsp[-1].var->type == Type::TYPE_DOUBLE && yyvsp[-2].var->type == Type::TYPE_INT){
+        }else if(yyvsp[-1].var->get_type() == Type::TYPE_DOUBLE && yyvsp[-2].var->get_type() == Type::TYPE_INT){
             int a = std::get<double>(yyvsp[-2].var->get_value());
             double b = std::get<int>(yyvsp[-1].var->get_value());
             double res = a + b;
@@ -1353,15 +1355,14 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 91 "parser.y"
+#line 93 "parser.y"
 
 
-int yyerror(const char *s){
-    std::cerr << "syntax error: " << s << std::endl;
+int yyerror(const char*){
+    std::cerr << "syntax error: " << std::endl;
     return 0;
 }
 
-Symbol_table table;
 
 int main(void) {
     yyparse();

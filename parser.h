@@ -13,7 +13,7 @@
 
  #line 8 "/usr/share/bison++/bison.h"
 
-#line 10 "parser.y"
+#line 12 "parser.y"
 typedef union {
     Symbol_base* var;
     double num;

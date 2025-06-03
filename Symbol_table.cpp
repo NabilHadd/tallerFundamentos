@@ -12,7 +12,7 @@ void Symbol_table::insert(const std::string& name, std::unique_ptr<Symbol_base> 
     }
 }
 
-Symbol_table::Symbol_base* get(const std::string& name) const {
+Symbol_base* Symbol_table::get(const std::string& name) const {
     auto it = table.find(name);
     if(it != table.end()) {
         return it->second.get();
