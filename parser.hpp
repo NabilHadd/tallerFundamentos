@@ -56,20 +56,22 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     NUM = 258,                     /* NUM  */
     VAR = 259,                     /* VAR  */
-    ADD = 260,                     /* ADD  */
-    SUB = 261,                     /* SUB  */
-    MUL = 262,                     /* MUL  */
-    DIV = 263,                     /* DIV  */
-    POW = 264,                     /* POW  */
-    INCP = 265,                    /* INCP  */
-    POSTINC = 266,                 /* POSTINC  */
-    INIT = 267,                    /* INIT  */
-    INT = 268,                     /* INT  */
-    DOUBLE = 269,                  /* DOUBLE  */
-    BOOL = 270,                    /* BOOL  */
-    PRINT = 271,                   /* PRINT  */
-    LPAREN = 272,                  /* LPAREN  */
-    RPAREN = 273                   /* RPAREN  */
+    STRING = 260,                  /* STRING  */
+    ADD = 261,                     /* ADD  */
+    SUB = 262,                     /* SUB  */
+    MUL = 263,                     /* MUL  */
+    DIV = 264,                     /* DIV  */
+    POW = 265,                     /* POW  */
+    INCP = 266,                    /* INCP  */
+    POSTINC = 267,                 /* POSTINC  */
+    INIT = 268,                    /* INIT  */
+    INT = 269,                     /* INT  */
+    DOUBLE = 270,                  /* DOUBLE  */
+    BOOL = 271,                    /* BOOL  */
+    STR = 272,                     /* STR  */
+    PRINT = 273,                   /* PRINT  */
+    LPAREN = 274,                  /* LPAREN  */
+    RPAREN = 275                   /* RPAREN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -84,7 +86,7 @@ union YYSTYPE
     double num;
     char* str;
 
-#line 88 "parser.hpp"
+#line 90 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
