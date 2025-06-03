@@ -1,6 +1,6 @@
 %{
 #include "Symbol_table.h"
-#include "parser.h"
+#include "parser.hpp"
 #include <stdlib.h>
 %}
 
@@ -22,8 +22,9 @@
 "/"                         { return DIV; }
 [\n]                        { return '\n'; }
 [ \t]+              ;       // ignorar espacios y tabs
-.                           { printf("Token no reconocido %s\n", yytext);}
 [a-zA-Z_][a-zA-Z0-9_]*      { yylval.str = strdup(yytext); return VAR; }
+.                           { printf("Token no reconocido %s\n", yytext);}
+
 %%
 
 int yywrap() { return 1; }

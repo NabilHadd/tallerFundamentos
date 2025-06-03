@@ -363,10 +363,10 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[42] =
     {   0,
-        0,    0,   21,   18,   17,   16,    6,    7,   14,   12,
+        0,    0,   21,   19,   17,   16,    6,    7,   14,   12,
        13,   15,    1,    8,   18,   18,   18,   18,   18,   17,
-        9,   10,    0,    1,   11,   19,   19,   19,   19,   19,
-        1,   19,   19,   19,    2,    3,    5,   19,   19,    4,
+        9,   10,    0,    1,   11,   18,   18,   18,   18,   18,
+        1,   18,   18,   18,    2,    3,    5,   18,   18,    4,
         0
     } ;
 
@@ -468,7 +468,7 @@ char *yytext;
 #line 1 "lexer.l"
 #line 2 "lexer.l"
 #include "Symbol_table.h"
-#include "parser.h"
+#include "parser.hpp"
 #include <stdlib.h>
 #line 474 "lexer.cpp"
 #line 475 "lexer.cpp"
@@ -836,16 +836,16 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 25 "lexer.l"
-{ printf("Token no reconocido %s\n", yytext);}
+{ yylval.str = strdup(yytext); return VAR; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 26 "lexer.l"
-{ yylval.str = strdup(yytext); return VAR; }
+{ printf("Token no reconocido %s\n", yytext);}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 27 "lexer.l"
+#line 28 "lexer.l"
 ECHO;
 	YY_BREAK
 #line 852 "lexer.cpp"
@@ -1853,7 +1853,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 27 "lexer.l"
+#line 28 "lexer.l"
 
 
 int yywrap() { return 1; }
