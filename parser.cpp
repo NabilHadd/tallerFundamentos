@@ -102,15 +102,15 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
 
 #include <stdio.h>
 #include <math.h>
-#include "var_table.h"
+#include "Symbol_table.h"
 
 #line 7 "parser.y"
 typedef union {
-    Symbol *var;
+    Symbol_base* var;
     double num;
     Value value;
     Type type;
-    char *str;
+    char* str;
 } yy_parse_stype;
 #define YY_parse_STYPE yy_parse_stype
 #ifndef YY_USE_CLASS
@@ -540,8 +540,8 @@ static const short yyrhs[] = {    -1,
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    41,    42,    45,    47,    48,    49,    50,    51,    54,    59,
-    68
+    41,    42,    45,    47,    48,    49,    50,    51,    54,    60,
+    69
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","NUM","VAR",
@@ -1097,53 +1097,50 @@ YYLABEL(yyreduce)
 
 case 5:
 #line 48 "parser.y"
-{ print_value(yyvsp[-2].var->value, yyvsp[-2].var->type); ;
+{ std::cout << "print" << std:endl; ;
     break;}
 case 6:
 #line 49 "parser.y"
-{insert(yyvsp[-3].str, TYPE_INT, yyvsp[-1].var->value);;
+{table.insert(yyvsp[-3].str, new Symbol_base(Type::TYPE_INT, yyvsp[-1].var));;
     break;}
 case 7:
 #line 50 "parser.y"
-{insert(yyvsp[-3].str, TYPE_DOUBLE, yyvsp[-1].var->value);;
+{table.insert(yyvsp[-3].str,new Symbol_base(Type::TYPE_DOUBLE, yyvsp[-1].var));;
     break;}
 case 8:
 #line 51 "parser.y"
-{insert(yyvsp[-3].str, TYPE_BOOL, yyvsp[-1].var->value);;
+{table.insert(yyvsp[-3].str,new Symbol_base(Type::TYPE_BOOL, yyvsp[-1].var));;
     break;}
 case 9:
 #line 55 "parser.y"
 { 
-        yyval.var->type = TYPE_DOUBLE;
-        yyval.var->value.d_value = yyvsp[0].num;                                          
+        yyval.var = new Symbol_base;
+        yyval.var->type = Type::TYPE_DOUBLE;
+        yyval.var->value = yyvsp[0].num;                                          
     ;
     break;}
 case 10:
-#line 59 "parser.y"
+#line 60 "parser.y"
 { 
-        Value v = get_value(yyvsp[0].str);
-        Type t = get_type(yyvsp[0].str);
+        Symbol_base* aux = table.get(yyvsp[0].str);
+        Value v = aux->get_value();
+        Type t = aux->get_type();
+
+        yyval.var = new Symbol_base;
         yyval.var->type = t;
-        yyval.var->value.i_value = v.i_value; // o d_value, según tipo
-        yyval.var->value.d_value = v.d_value;
-        yyval.var->value.b_value = v.b_value;
-        yyval.var->value.s_value = v.s_value;
+        yyval.var->value = v;
     ;
     break;}
 case 11:
-#line 68 "parser.y"
+#line 69 "parser.y"
 {
-        if (yyvsp[-2].var->type == TYPE_INT && yyvsp[-1].var->type == TYPE_INT){
-            yyval.var->type = TYPE_INT;
-            yyval.var->value.i_value = yyvsp[-2].var->value.i_value + yyvsp[-1].var->value.i_value;
+        if (yyvsp[-2].var->type == Type::TYPE_INT && yyvsp[-1].var->type == Type::TYPE_INT){
+            yyval.var->type = Type::TYPE_INT;
+            yyval.var->value = yyvsp[-2].var->value + yyvsp[-1].var->value;
 
-        } else if(yyvsp[-2].var->type == TYPE_DOUBLE && yyvsp[-1].var->type == TYPE_INT){
-            yyval.var->type = TYPE_DOUBLE;
-            yyval.var->value.d_value = yyvsp[-2].var->value.d_value + yyvsp[-1].var->value.i_value;
-
-        } else if(yyvsp[-1].var->type == TYPE_DOUBLE && yyvsp[-2].var->type == TYPE_INT){
-            yyval.var->type = TYPE_DOUBLE;
-            yyval.var->value.d_value = yyvsp[-1].var->value.d_value + yyvsp[-2].var->value.i_value;
+        } else if((yyvsp[-2].var->type == Type::TYPE_DOUBLE && yyvsp[-1].var->type == Type::TYPE_INT) || (yyvsp[-1].var->type == Type::TYPE_DOUBLE && yyvsp[-2].var->type == Type::TYPE_INT)){
+            yyval.var->type = Type::TYPE_DOUBLE;
+            yyval.var->value = yyvsp[-2].var->value + yyvsp[-1].var->value;
         }
     ;
     break;}
@@ -1351,10 +1348,11 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 89 "parser.y"
+#line 86 "parser.y"
 
 int main(void) {
     yyparse();
+    Symbol_table table;
     printf("todo ben\n");
     free_memory();
     return 0;

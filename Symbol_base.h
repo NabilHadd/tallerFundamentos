@@ -23,7 +23,7 @@ private:
     Value value;
 
 public:
-    Type get_tipo() const;
+    Type get_type() const;
     Value get_value() const;
 
     void set_type(Type t);

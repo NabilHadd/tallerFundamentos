@@ -15,11 +15,11 @@
 
 #line 7 "parser.y"
 typedef union {
-    Symbol *var;
+    Symbol_base* var;
     double num;
     Value value;
     Type type;
-    char *str;
+    char* str;
 } yy_parse_stype;
 #define YY_parse_STYPE yy_parse_stype
 #ifndef YY_USE_CLASS
