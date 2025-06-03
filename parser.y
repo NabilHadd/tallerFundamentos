@@ -1,4 +1,5 @@
 %{
+#include <iostream>
 #include <stdio.h>
 #include <math.h>
 #include "Symbol_table.h"
@@ -78,6 +79,12 @@ exp:
     //| exp POSTINC           { $$ = $1++; }
     ;
 %%
+
+int yyerror(const std::string& error) {
+    std::cout << "syntax error: " << error << std::endl;
+    return 0;
+}
+
 Symbol_table table;
 int main(void) {
     yyparse();
