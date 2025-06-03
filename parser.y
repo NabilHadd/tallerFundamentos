@@ -45,9 +45,9 @@ line:
     '\n'
     | exp '\n'
     | PRINT LPAREN exp RPAREN '\n'            { std::cout << "print" << std:endl; }
-    | INT VAR INIT exp '\n'        {table.insert($2, new Symbol_base(Type::TYPE_INT, $4));}
-    | DOUBLE VAR INIT exp '\n'        {table.insert($2,new Symbol_base(Type::TYPE_DOUBLE, $4));}
-    | BOOL VAR INIT exp '\n'        {table.insert($2,new Symbol_base(Type::TYPE_BOOL, $4));}
+    | INT VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, $4);}
+    | DOUBLE VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, $4));}
+    | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, $4));}
     ;
 
 exp:
@@ -63,12 +63,20 @@ exp:
     }
     | exp exp ADD           {
         if ($1->type == Type::TYPE_INT && $2->type == Type::TYPE_INT){
-            int aux = std::get<int>($1->value) + std::get<int>($2->value);
-            $$ = new Symbol_base(Type::TYPE_INT, aux);
+            int a = std::get<int>($1->get_value());
+            int b = std::get<int>($2->get_value());
+            int res = a + b;
+            $$ = new Symbol_base(Type::TYPE_INT, res);
 
-        } else if(($1->type == Type::TYPE_DOUBLE && $2->type == Type::TYPE_INT) || ($2->type == Type::TYPE_DOUBLE && $1->type == Type::TYPE_INT)){
-            $$->type = Type::TYPE_DOUBLE;
-            $$->value = $1->value + $2->value;
+        } else if($1->type == Type::TYPE_DOUBLE && $2->type == Type::TYPE_INT){
+            double a = std::get<double>($1->get_value());
+            int b = std::get<int>($2->get_value());
+            double res = a + b;
+            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else if($2->type == Type::TYPE_DOUBLE && $1->type == Type::TYPE_INT){
+            int a = std::get<double>($1->get_value());
+            double b = std::get<int>($2->get_value());
+            double res = a + b;
         }
     }
     //| exp exp SUB           { $$ = $1 - $2; }
