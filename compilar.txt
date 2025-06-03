@@ -1,0 +1,7 @@
+bison -d -o parser.cpp parser.y
+flex -o lexer.cpp lexer.l
+
+g++ -std=c++17 -o pol parser.cpp lexer.cpp Symbol_base.cpp -lfl
+
+g++ -std=c++17 -c parser.cpp lexer.cpp Symbol_base.cpp
+

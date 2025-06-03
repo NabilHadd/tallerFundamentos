@@ -467,8 +467,8 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lexer.l"
 #line 2 "lexer.l"
-#include "var_table.h"
-#include "parser.tab.h"
+#include "Symbol_table.h"
+#include "parser.h"
 #include <stdlib.h>
 #line 474 "lexer.cpp"
 #line 475 "lexer.cpp"

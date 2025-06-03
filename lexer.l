@@ -1,6 +1,6 @@
 %{
-#include "var_table.h"
-#include "parser.tab.h"
+#include "Symbol_table.h"
+#include "parser.h"
 #include <stdlib.h>
 %}
 

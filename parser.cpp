@@ -100,16 +100,17 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
  #line 88 "/usr/share/bison++/bison.cc"
 #line 1 "parser.y"
 
+#include <iostream>
 #include <stdio.h>
 #include <math.h>
 #include "Symbol_table.h"
+#include "errors.h"
 
-#line 7 "parser.y"
+
+#line 10 "parser.y"
 typedef union {
     Symbol_base* var;
     double num;
-    Value value;
-    Type type;
     char* str;
 } yy_parse_stype;
 #define YY_parse_STYPE yy_parse_stype
@@ -540,8 +541,8 @@ static const short yyrhs[] = {    -1,
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    41,    42,    45,    47,    48,    49,    50,    51,    54,    60,
-    69
+    42,    43,    46,    48,    49,    50,    51,    52,    55,    59,
+    66
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","NUM","VAR",
@@ -1096,51 +1097,55 @@ YYLABEL(yyreduce)
   switch (yyn) {
 
 case 5:
-#line 48 "parser.y"
-{ std::cout << "print" << std:endl; ;
+#line 49 "parser.y"
+{ std::cout << "print" << std::endl; ;
     break;}
 case 6:
-#line 49 "parser.y"
-{table.insert(yyvsp[-3].str, new Symbol_base(Type::TYPE_INT, yyvsp[-1].var));;
+#line 50 "parser.y"
+{table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_INT, yyvsp[-1].var);;
     break;}
 case 7:
-#line 50 "parser.y"
-{table.insert(yyvsp[-3].str,new Symbol_base(Type::TYPE_DOUBLE, yyvsp[-1].var));;
+#line 51 "parser.y"
+{table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, yyvsp[-1].var));;
     break;}
 case 8:
-#line 51 "parser.y"
-{table.insert(yyvsp[-3].str,new Symbol_base(Type::TYPE_BOOL, yyvsp[-1].var));;
+#line 52 "parser.y"
+{table.insert(yyvsp[-3].str, std::make_unique<Symbol_base>(Type::TYPE_BOOL, yyvsp[-1].var));;
     break;}
 case 9:
-#line 55 "parser.y"
+#line 56 "parser.y"
 { 
-        yyval.var = new Symbol_base;
-        yyval.var->type = Type::TYPE_DOUBLE;
-        yyval.var->value = yyvsp[0].num;                                          
+        yyval.var = new Symbol_base(Type::TYPE_DOUBLE, yyvsp[0].num);                
     ;
     break;}
 case 10:
-#line 60 "parser.y"
+#line 59 "parser.y"
 { 
         Symbol_base* aux = table.get(yyvsp[0].str);
         Value v = aux->get_value();
         Type t = aux->get_type();
 
-        yyval.var = new Symbol_base;
-        yyval.var->type = t;
-        yyval.var->value = v;
+        yyval.var = new Symbol_base(t, v);
     ;
     break;}
 case 11:
-#line 69 "parser.y"
+#line 66 "parser.y"
 {
         if (yyvsp[-2].var->type == Type::TYPE_INT && yyvsp[-1].var->type == Type::TYPE_INT){
-            yyval.var->type = Type::TYPE_INT;
-            yyval.var->value = yyvsp[-2].var->value + yyvsp[-1].var->value;
+            int a = std::get<int>(yyvsp[-2].var->get_value());
+            int b = std::get<int>(yyvsp[-1].var->get_value());
+            int res = a + b;
+            yyval.var = new Symbol_base(Type::TYPE_INT, res);
 
-        } else if((yyvsp[-2].var->type == Type::TYPE_DOUBLE && yyvsp[-1].var->type == Type::TYPE_INT) || (yyvsp[-1].var->type == Type::TYPE_DOUBLE && yyvsp[-2].var->type == Type::TYPE_INT)){
-            yyval.var->type = Type::TYPE_DOUBLE;
-            yyval.var->value = yyvsp[-2].var->value + yyvsp[-1].var->value;
+        } else if(yyvsp[-2].var->type == Type::TYPE_DOUBLE && yyvsp[-1].var->type == Type::TYPE_INT){
+            double a = std::get<double>(yyvsp[-2].var->get_value());
+            int b = std::get<int>(yyvsp[-1].var->get_value());
+            double res = a + b;
+            yyval.var = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else if(yyvsp[-1].var->type == Type::TYPE_DOUBLE && yyvsp[-2].var->type == Type::TYPE_INT){
+            int a = std::get<double>(yyvsp[-2].var->get_value());
+            double b = std::get<int>(yyvsp[-1].var->get_value());
+            double res = a + b;
         }
     ;
     break;}
@@ -1348,13 +1353,19 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 86 "parser.y"
+#line 91 "parser.y"
+
+
+int yyerror(const char *s){
+    std::cerr << "syntax error: " << s << std::endl;
+    return 0;
+}
+
+Symbol_table table;
 
 int main(void) {
     yyparse();
-    Symbol_table table;
-    printf("todo ben\n");
-    free_memory();
+    table.clean_table();
     return 0;
 }
 

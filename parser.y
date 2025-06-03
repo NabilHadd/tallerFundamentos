@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "Symbol_table.h"
+#include "errors.h"
+extern "C" int yylex();
+
 %}
 
 %union {
@@ -44,7 +47,7 @@ input:
 line:
     '\n'
     | exp '\n'
-    | PRINT LPAREN exp RPAREN '\n'            { std::cout << "print" << std:endl; }
+    | PRINT LPAREN exp RPAREN '\n'            { std::cout << "print" << std::endl; }
     | INT VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, $4);}
     | DOUBLE VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, $4));}
     | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, $4));}
@@ -88,15 +91,15 @@ exp:
     ;
 %%
 
-int yyerror(const char *s) {
+int yyerror(const char *s){
     std::cerr << "syntax error: " << s << std::endl;
     return 0;
 }
 
 Symbol_table table;
+
 int main(void) {
     yyparse();
-    printf("todo ben\n");
     table.clean_table();
     return 0;
 }
