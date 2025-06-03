@@ -88,8 +88,8 @@ exp:
     ;
 %%
 
-int yyerror(const std::string& error) {
-    std::cout << "syntax error: " << error << std::endl;
+int yyerror(const char *s) {
+    std::cerr << "syntax error: " << s << std::endl;
     return 0;
 }
 
