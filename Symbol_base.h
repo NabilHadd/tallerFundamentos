@@ -13,7 +13,7 @@ enum class Type {
     TYPE_STRING
 };
 
-using Value = std::variant<int, double, bool, std::string>
+using Value = std::variant<int, double, bool, std::string>;
 
 
 class Symbol_base{

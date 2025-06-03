@@ -15,16 +15,25 @@ struct Symbol_table {
     }
 
     void insert(const std::string& name, std::unique_ptr<Symbol_base> symbol){
-        has(name) ? yyerror('ya existe la variable'): table.emplace(name, std::move(symbol));
+        if(has(name)){
+            yyerror("ya existe la variable");
+        }else{
+            table.emplace(name, std::move(symbol));
+        }
     }
 
     Symbol_base* get(const std::string& name) const{
         auto it = table.find(name);
-        (it != table.end()) ? return it->second-get() : (return nullptr, yyerror("no se hallo la variable"));     
+        if(it!= table.end()){
+            return it->second.get();
+        }else{
+            return nullptr;
+        }
+             
     }
 
     void erase_symbol(const std::string& name){
-        table.erase(name)    
+        table.erase(name);
     }
 
     void clean_table() {
@@ -38,22 +47,22 @@ struct Symbol_table {
 
     void print_value(const std::string& name){
     
-    Symbol base* s = get(name);
-    type = s->get_type();
-    value = s->get_value();
+    Symbol_base* s = get(name);
+    Type type = s->get_type();
+    Value value = s->get_value();
     
     switch(type){
-        case Type::TYPE_INT: std::cout << value << std::endl; break;
-        case Type::TYPE_DOUBLE: std::cout << value << std::endl; break;
+        case Type::TYPE_INT: std::cout << std::get<int>(value) << std::endl; break;
+        case Type::TYPE_DOUBLE: std::cout << std::get<double>(value) << std::endl; break;
         case Type::TYPE_BOOL: 
-            if(value){
+            if(std::get<bool>(value)){
                 std::cout << "false" << std::endl;
             }else{
                 std::cout << "true" << std::endl;
             }
             break;
-        case Type::TYPE_STRING: std::cout << value << std::endl; break;
-        default: std::cout << value << std:endl;
+        case Type::TYPE_STRING: std::cout << std::get<std::string>(value) << std::endl; break;
+        default: std::cout << "<16800002x1>" << std::endl;
         }
     }
 

@@ -7,8 +7,6 @@
 %union {
     Symbol_base* var;
     double num;
-    Value value;
-    Type type;
     char* str;
 }
 
@@ -53,23 +51,19 @@ line:
 
 exp:
     NUM                     { 
-        $$ = new Symbol_base;
-        $$->type = Type::TYPE_DOUBLE;
-        $$->value = $1;                                          
+        $$ = new Symbol_base(Type::TYPE_DOUBLE, $1);                
     }
     | VAR                   { 
         Symbol_base* aux = table.get($1);
         Value v = aux->get_value();
         Type t = aux->get_type();
 
-        $$ = new Symbol_base;
-        $$->type = t;
-        $$->value = v;
+        $$ = new Symbol_base(t, v);
     }
     | exp exp ADD           {
         if ($1->type == Type::TYPE_INT && $2->type == Type::TYPE_INT){
-            $$->type = Type::TYPE_INT;
-            $$->value = $1->value + $2->value;
+            int aux = std::get<int>($1->value) + std::get<int>($2->value);
+            $$ = new Symbol_base(Type::TYPE_INT, aux);
 
         } else if(($1->type == Type::TYPE_DOUBLE && $2->type == Type::TYPE_INT) || ($2->type == Type::TYPE_DOUBLE && $1->type == Type::TYPE_INT)){
             $$->type = Type::TYPE_DOUBLE;
@@ -84,11 +78,11 @@ exp:
     //| exp POSTINC           { $$ = $1++; }
     ;
 %%
+Symbol_table table;
 int main(void) {
     yyparse();
-    Symbol_table table;
     printf("todo ben\n");
-    free_memory();
+    table.clean_table();
     return 0;
 }
 
