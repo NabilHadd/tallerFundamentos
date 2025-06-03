@@ -62,7 +62,4 @@ public:
     }
 };
 
-// Mover esta función fuera de la clase
-int yyerror(const std::string& error);
-
 #endif
