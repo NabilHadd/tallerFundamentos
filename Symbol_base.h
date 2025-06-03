@@ -1,7 +1,6 @@
 #ifndef SYMBOL_BASE_H
 #define SYMBOL_BASE_H
 
-
 #include <iostream>
 #include <string>
 #include <variant>
@@ -15,9 +14,7 @@ enum class Type {
 
 using Value = std::variant<int, double, bool, std::string>;
 
-
-class Symbol_base{
-
+class Symbol_base {
 private:
     Type type;
     Value value;
@@ -27,12 +24,10 @@ public:
     Value get_value() const;
 
     void set_type(Type t);
-    void set_value(Value v);
+    void set_value(const Value& v); // <-- evitamos copia innecesaria
 
-    Symbol_base(Type t, Value v);
-    virtual ~Symbol_base();
-
+    Symbol_base(Type t, const Value& v); // <-- evitamos copia innecesaria
+    virtual ~Symbol_base(); // <-- solo si planeas heredar
 };
-
 
 #endif
