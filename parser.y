@@ -185,18 +185,28 @@ exp:
 
         }else if(t1 == Type::TYPE_STRING){
 
-            std::visit([&](auto&& a, auto&& b) {
+            std::visit([&](auto&& a, auto&& b) {//visit prueba con todas las combinaciones posibles para a y b
                 std::string str_val;
                 using A = std::decay_t<decltype(a)>;
                 using B = std::decay_t<decltype(b)>;
-                if constexpr (std::is_same_v<B, bool>)
-                    str_val = b ? "true" : "false";
-                else
-                    str_val = std::to_string(b);
-                res = a + str_val;
+                
+                if constexpr (std::is_same_v<A, std::string>){
+                    std::string str_val;                    
+                    if constexpr (std::is_same_v<B, std::string>) {
+                        str_val = b;
+                    }else if constexpr (std::is_same_v<B, bool>){                   
+                        str_val = b ? "true" : "false";
+                    }
+                    else{
+                        str_val = std::to_string(b);
+                    }
+                res = a + str_val;                
+                }else{
+                    yyerror("la primera variable no es str"); 
+                }
             }, v1, v2);
+            $$ = new Symbol_base(Type::TYPE_STRING, res);
 
-            
         }else if(t2 == Type::TYPE_STRING){
             
         }

@@ -522,7 +522,7 @@ static const yytype_int16 yyrline[] =
 {
        0,    46,    46,    47,    51,    52,    53,    54,    55,    56,
       57,    58,    70,    81,    83,    99,   142,   145,   148,   155,
-     204,   230,   256
+     214,   240,   266
 };
 #endif
 
@@ -1307,23 +1307,33 @@ yyreduce:
                 std::string str_val;
                 using A = std::decay_t<decltype(a)>;
                 using B = std::decay_t<decltype(b)>;
-                if constexpr (std::is_same_v<B, bool>)
-                    str_val = b ? "true" : "false";
-                else
-                    str_val = std::to_string(b);
-                res = a + str_val;
+                
+                if constexpr (std::is_same_v<A, std::string>){
+                    std::string str_val;                    
+                    if constexpr (std::is_same_v<B, std::string>) {
+                        str_val = b;
+                    }else if constexpr (std::is_same_v<B, bool>){                   
+                        str_val = b ? "true" : "false";
+                    }
+                    else{
+                        str_val = std::to_string(b);
+                    }
+                res = a + str_val;                
+                }else{
+                    yyerror("la primera variable no es str"); 
+                }
             }, v1, v2);
+            (yyval.var) = new Symbol_base(Type::TYPE_STRING, res);
 
-            
         }else if(t2 == Type::TYPE_STRING){
             
         }
     }
-#line 1323 "parser.cpp"
+#line 1333 "parser.cpp"
     break;
 
   case 20: /* exp: exp exp SUB  */
-#line 204 "parser.y"
+#line 214 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1350,11 +1360,11 @@ yyreduce:
             yyerror("tipos incompatibles para resta");
         }
     }
-#line 1354 "parser.cpp"
+#line 1364 "parser.cpp"
     break;
 
   case 21: /* exp: exp exp MUL  */
-#line 230 "parser.y"
+#line 240 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1381,11 +1391,11 @@ yyreduce:
             yyerror("tipos incompatibles para multiplicacion");
         }
     }
-#line 1385 "parser.cpp"
+#line 1395 "parser.cpp"
     break;
 
   case 22: /* exp: exp exp DIV  */
-#line 256 "parser.y"
+#line 266 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1412,11 +1422,11 @@ yyreduce:
             yyerror("tipos incompatibles para division");        
         }
     }
-#line 1416 "parser.cpp"
+#line 1426 "parser.cpp"
     break;
 
 
-#line 1420 "parser.cpp"
+#line 1430 "parser.cpp"
 
       default: break;
     }
@@ -1609,7 +1619,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 286 "parser.y"
+#line 296 "parser.y"
 
 
 void print_value(Type t, Value v) {
