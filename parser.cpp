@@ -1669,11 +1669,11 @@ void print_value(Value v) {
         if constexpr (std::is_same_v<T, std::string>){
             s_val = arg;
         }else if constexpr (std::is_same_v<T, bool>){
-            s_val = "hola";
+            s_val = (arg ? "true" : "false");
         }else{
             s_val = std::to_string(arg);
         }
-        std::cout << arg << std::endl;
+        std::cout << s_val << std::endl;
         
     }, v);
 }

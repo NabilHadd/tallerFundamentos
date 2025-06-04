@@ -339,7 +339,7 @@ void print_value(Value v) {
         }else{
             s_val = std::to_string(arg);
         }
-        std::cout << arg << std::endl;
+        std::cout << s_val << std::endl;
         
     }, v);
 }
