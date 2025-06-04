@@ -806,7 +806,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 14 "lexer.l"
-{  yylval.bool_ strdup(yytext);
+{  yylval.bool_ = strdup(yytext);
                               return V_BOOL;}
 	YY_BREAK
 case 3:

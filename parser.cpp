@@ -1141,7 +1141,7 @@ yyreduce:
 
   case 10: /* line: PRINT LPAREN exp RPAREN '\n'  */
 #line 59 "parser.y"
-                                              { print_value((yyvsp[-2].var_)->get_type(), (yyvsp[-2].var_)->get_value()); }
+                                              { print_value((yyvsp[-2].var_)->get_value()); }
 #line 1146 "parser.cpp"
     break;
 
@@ -1660,22 +1660,21 @@ yyreturnlab:
 #line 327 "parser.y"
 
 
-void print_value(Type t, Value v) {
-    std::visit([t](auto&& arg){
-        switch (t){
-            case Type::TYPE_INT:
-            case Type::TYPE_DOUBLE:
-                std::cout << arg << std::endl;
-                break;
-            case Type::TYPE_BOOL:
-                //std::cout << (arg ? "true": "false") << std::endl;
-                break;
-            case Type::TYPE_STRING:
-                std::cout << arg << std::endl;
-                break;
-            default:
-                std::cout<<"no deberia entrar aca nunca"<<std::endl;
-        }    
+void print_value(Value v) {
+
+    std::string s_val;
+
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, std::string>){
+            s_val = arg;
+        }else if constexpr (std::is_same_v<T, bool>){
+            s_val = "hola";
+        }else{
+            s_val = std::to_string(arg);
+        }
+        std::cout << arg << std::endl;
+        
     }, v);
 }
 

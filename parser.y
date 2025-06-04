@@ -56,7 +56,7 @@ line:
     | BOOL VAR '\n'                {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));} 
     | STR VAR '\n'                 {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));}
     | INT VAR '\n'                  {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
-    | PRINT LPAREN exp RPAREN '\n'            { print_value($3->get_type(), $3->get_value()); }
+    | PRINT LPAREN exp RPAREN '\n'            { print_value($3->get_value()); }
     | INT VAR INIT exp '\n'         {if($4->get_type() == Type::TYPE_INT){
 
                                         table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>($4->get_value())));
@@ -326,22 +326,21 @@ exp:
     ;
 %%
 
-void print_value(Type t, Value v) {
-    std::visit([t](auto&& arg){
-        switch (t){
-            case Type::TYPE_INT:
-            case Type::TYPE_DOUBLE:
-                std::cout << arg << std::endl;
-                break;
-            case Type::TYPE_BOOL:
-                //std::cout << (arg ? "true": "false") << std::endl;
-                break;
-            case Type::TYPE_STRING:
-                std::cout << arg << std::endl;
-                break;
-            default:
-                std::cout<<"no deberia entrar aca nunca"<<std::endl;
-        }    
+void print_value(Value v) {
+
+    std::string s_val;
+
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, std::string>){
+            s_val = arg;
+        }else if constexpr (std::is_same_v<T, bool>){
+            s_val = (arg ? "true" : "false");
+        }else{
+            s_val = std::to_string(arg);
+        }
+        std::cout << arg << std::endl;
+        
     }, v);
 }
 
