@@ -66,8 +66,23 @@ line:
     | DOUBLE VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>($4->get_value())));}
     | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>($4->get_value())));}
     | STR VAR INIT exp '\n'         {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>($4->get_value())));}//aplicar casteo a string
-    | VAR INIT exp '\n'             {table.update($1, std::make_unique<Symbol_base>($3->get_type(), $3->get_value()));}
+    | VAR INIT exp '\n'             {
+                                    Symbol_base* var = table.get($1);
+                                    if(var->get_type() == $3->get_type()){
+                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), $3->get_value()));
+                                    }else if(var->get_type() == Type::TYPE_INT and $3->get_type() == Type::TYPE_DOUBLE){
+                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<int>(std::get<double>( $3->get_value()))));
+                                    }else if(var->get_type() == Type::TYPE_DOUBLE and $3->get_type() == Type::TYPE_INT){
+                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<double>(std::get<int>( $3->get_value()))));
+                                    }else if(var->get_type() == Type::TYPE_STRING){
+                                        std::visit([](auto&& arg){
+                                            table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<std::string>(arg)));
+                                        }, $3->get_value());
+                                    }else{ yyerror("tipos incompatibles");}
+                                    }
     ;
+
+
 
 exp:
     NUM                     { 
@@ -96,13 +111,13 @@ exp:
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            int a = std::get<int>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            double a = std::get<double>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
@@ -120,13 +135,13 @@ exp:
             double res = a - b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            int a = std::get<int>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a - b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            double a = std::get<double>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a - b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
@@ -144,13 +159,13 @@ exp:
             double res = a * b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            int a = std::get<int>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a * b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            double a = std::get<double>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a * b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
@@ -168,13 +183,13 @@ exp:
             double res = a / b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            int a = std::get<int>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a / b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            int a = std::get<double>($1->get_value());
-            double b = std::get<int>($2->get_value());
+            double a = std::get<double>($1->get_value());
+            double b = std::get<double>($2->get_value());
             double res = a / b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
