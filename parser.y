@@ -141,19 +141,17 @@ exp:
             Value v2 = $2->get_value();
             Value res;
 
-        if(t1 == t2 ){
+       if (t1 == t2) {
             Value res;
-            std::visit([&](auto&& a){
-                std::visit([&](auto&& b){
+            std::visit([&](auto&& a, auto&& b) {
+                using T = std::decay_t<decltype(a)>;
+                if constexpr (std::is_same_v<T, decltype(b)>) {
                     res = a + b;
-                }, v2);
-            },v1);
+                } else {
+                    yyerror("Error interno: tipos incompatibles aunque t1 == t2");
+                }
+            }, v1, v2);
             $$ = new Symbol_base(t1, res);
-            //parser.y:145:23:   required from here
-            //parser.y:147:29: error: no match for ‘operator+’ (operand types are ‘int’ and ‘std::__cxx11::basic_string<char>’)
-            //147 |                     res = a + b;
-            //|   
-
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
             int a = std::get<int>(v1);
             int b = std::get<int>(v2);
