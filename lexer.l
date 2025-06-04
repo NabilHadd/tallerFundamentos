@@ -9,7 +9,10 @@ extern int yylineno;
 %option yylineno
 
 %%
--?[0-9]+(\.[0-9]+)?         { yylval.num = atof(yytext); return NUM; }
+-?[0-9]+(\.[0-9]+)?         { yylval.num_ = atof(yytext); 
+                              return NUM; }
+(true|false)                {  yylval.bool_ strdup(yytext);
+                              return V_BOOL;}
 "int"                       { return INT;}
 "bool"                      { return BOOL;}
 "double"                    {return DOUBLE;}
@@ -28,10 +31,11 @@ extern int yylineno;
 [\n]                        { return '\n'; }
 [ \t]+              ;       // ignorar espacios y tabs
 \"([^\\\"]|\\.)*\"          {yytext[yyleng - 1] = '\0';
-                             yylval.str = strdup(yytext + 1);
+                             yylval.str_ = strdup(yytext + 1);
                              return STRING;
                             }
-[a-zA-Z_][a-zA-Z0-9_]*      { yylval.str = strdup(yytext); return VAR; }
+[a-zA-Z_][a-zA-Z0-9_]*      { yylval.str_ = strdup(yytext); 
+                              return VAR; }
 .                           { printf("Token no reconocido %s\n", yytext);}
 
 %%

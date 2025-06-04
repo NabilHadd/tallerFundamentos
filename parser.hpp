@@ -57,21 +57,22 @@ extern int yydebug;
     NUM = 258,                     /* NUM  */
     VAR = 259,                     /* VAR  */
     STRING = 260,                  /* STRING  */
-    ADD = 261,                     /* ADD  */
-    SUB = 262,                     /* SUB  */
-    MUL = 263,                     /* MUL  */
-    DIV = 264,                     /* DIV  */
-    POW = 265,                     /* POW  */
-    INCP = 266,                    /* INCP  */
-    POSTINC = 267,                 /* POSTINC  */
-    INIT = 268,                    /* INIT  */
-    INT = 269,                     /* INT  */
-    DOUBLE = 270,                  /* DOUBLE  */
-    BOOL = 271,                    /* BOOL  */
-    STR = 272,                     /* STR  */
-    PRINT = 273,                   /* PRINT  */
-    LPAREN = 274,                  /* LPAREN  */
-    RPAREN = 275                   /* RPAREN  */
+    V_BOOL = 261,                  /* V_BOOL  */
+    ADD = 262,                     /* ADD  */
+    SUB = 263,                     /* SUB  */
+    MUL = 264,                     /* MUL  */
+    DIV = 265,                     /* DIV  */
+    POW = 266,                     /* POW  */
+    INCP = 267,                    /* INCP  */
+    POSTINC = 268,                 /* POSTINC  */
+    INIT = 269,                    /* INIT  */
+    INT = 270,                     /* INT  */
+    DOUBLE = 271,                  /* DOUBLE  */
+    BOOL = 272,                    /* BOOL  */
+    STR = 273,                     /* STR  */
+    PRINT = 274,                   /* PRINT  */
+    LPAREN = 275,                  /* LPAREN  */
+    RPAREN = 276                   /* RPAREN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -82,11 +83,12 @@ union YYSTYPE
 {
 #line 13 "parser.y"
 
-    Symbol_base* var;
-    double num;
-    char* str;
+    Symbol_base* var_;
+    double num_;
+    bool bool_;
+    char* str_;
 
-#line 90 "parser.hpp"
+#line 92 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -1,4 +1,2 @@
-int a = 1
-int b = 1
-string c = "hola este es el resultado de mi suma"
-cout(a b +)
+bool a = true
+cout(a)
