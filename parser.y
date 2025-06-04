@@ -69,11 +69,11 @@ line:
 
     | DOUBLE VAR INIT exp '\n'     {if($4->get_type() == Type::TYPE_INT){
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<double>(std::get<int>($4->get_value()))));
+                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, static_cast<double>(std::get<int>($4->get_value()))));
 
                                     }else if($4->get_type() == Type::TYPE_DOUBLE){
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<double>( $4->get_value() )));
+                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>( $4->get_value() )));
 
                                     }else{yyerror("Tipo incompatible con double");}
                                     
@@ -135,27 +135,40 @@ exp:
         $$ = new Symbol_base(t, v);
     }
     | exp exp ADD           {
-        if ($1->get_type() == Type::TYPE_INT && $2->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            int b = std::get<int>($2->get_value());
+            Type t1 = $1->get_type();
+            Type t2 = $2->get_type();
+            Value v1 = $1->get_value();
+            Value v2 = $2->get_value();
+        if(t1 == t2 ){
+            int res;
+            std::visit([&res](auto&& a, auto&& b){
+                res = a + b;
+            },v1, v2 );
+            $$ = new Symbol_base(t, res);
+        }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
+            int a = std::get<int>(v1);
+            int b = std::get<int>(v2);
             int res = a + b;
             $$ = new Symbol_base(Type::TYPE_INT, res);
 
-        } else if($1->get_type() == Type::TYPE_DOUBLE && $2->get_type() == Type::TYPE_INT){
-            double a = std::get<double>($1->get_value());
-            int b = std::get<int>($2->get_value());
+        } else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
+            double a = std::get<double>(v1);
+            int b = std::get<int>(v2);
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            double b = std::get<double>($2->get_value());
+        }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
+            int a = std::get<int>(v1);
+            double b = std::get<double>(v2);
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>($1->get_value());
-            double b = std::get<double>($2->get_value());
+        }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
+            double a = std::get<double>(v1);
+            double b = std::get<double>(v2);
             double res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else if(t1 == Type::TYPE_STRING && t2 == Type::TYPE_STRING){
+            //std::string a = std::get<>
+            std::cout<<"";        
         }
     }
     | exp exp SUB           {
@@ -180,6 +193,8 @@ exp:
             double b = std::get<double>($2->get_value());
             double res = a - b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else{
+            yyerror("tipos incompatibles para resta");
         }
     }
     | exp exp MUL           {
@@ -204,6 +219,8 @@ exp:
             double b = std::get<double>($2->get_value());
             double res = a * b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else{
+            yyerror("tipos incompatibles para multiplicacion");
         }
     }
     | exp exp DIV           {
@@ -228,6 +245,8 @@ exp:
             double b = std::get<double>($2->get_value());
             double res = a / b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else{
+            yyerror("tipos incompatibles para division");        
         }
     }
     //| exp exp POW           { $$ = pow($1, $2); }
@@ -256,7 +275,7 @@ void print_value(Type t, Value v) {
 }
 
 int yyerror(const char* s){
-    std::cerr << "Syntax error in line "<< yylineno << ": "<< s << std::endl;
+    std::cerr << "Error in line "<< yylineno << ": "<< s << std::endl;
     exit(EXIT_FAILURE);
     return 0;
 }
