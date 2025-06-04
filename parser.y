@@ -49,6 +49,7 @@ input:
 line:
     '\n'
     | exp '\n'
+    | INT VAR '\n'                 {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
     | PRINT LPAREN exp RPAREN '\n'            { print_value($3->get_type(), $3->get_value()); }
     | INT VAR INIT exp '\n'        {if($4->get_type() == Type::TYPE_INT){
 

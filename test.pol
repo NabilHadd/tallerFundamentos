@@ -1,4 +1,4 @@
-int a = 2
-a = a a+ a+ a+ 
+int a
 a = 1
+a = a a+ a+ a+ 
 cout(a)

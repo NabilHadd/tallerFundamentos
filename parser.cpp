@@ -459,16 +459,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   74
+#define YYLAST   72
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  22
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  18
+#define YYNRULES  19
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  44
+#define YYNSTATES  45
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   275
@@ -519,8 +519,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    45,    45,    46,    50,    51,    52,    53,    65,    66,
-      67,    68,    72,    75,    78,    85,   109,   133,   157
+       0,    45,    45,    46,    50,    51,    52,    53,    54,    66,
+      67,    68,    69,    73,    76,    79,    86,   110,   134,   158
 };
 #endif
 
@@ -549,7 +549,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-7)
+#define YYPACT_NINF (-3)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -563,11 +563,11 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -7,    16,    -7,    -7,    -6,    -7,     4,     8,    10,    11,
-       9,    -7,    -7,     1,    -2,    22,    23,    40,    42,    -2,
-      -7,    -7,    65,     6,    -2,    -2,    -2,    -2,    47,    -7,
-      -7,    -7,    -7,    -7,    35,    38,    41,    44,    -4,    -7,
-      -7,    -7,    -7,    -7
+      -3,    16,    -3,    -3,     2,    -3,    10,    13,    25,    31,
+      17,    -3,    -3,     1,    -2,    37,    39,    40,    42,    -2,
+      -3,    -3,    63,     7,    -2,    -3,    -2,    -2,    -2,     4,
+      -3,    -3,    -3,    -3,    -3,    35,    38,    41,    44,    30,
+      -3,    -3,    -3,    -3,    -3
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -575,17 +575,17 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     0,     1,    12,    14,    13,     0,     0,     0,     0,
+       2,     0,     1,    13,    15,    14,     0,     0,     0,     0,
        0,     4,     3,     0,     0,     0,     0,     0,     0,     0,
-      14,     5,     0,     0,     0,     0,     0,     0,     0,    15,
-      16,    17,    18,    11,     0,     0,     0,     0,     0,     7,
-       8,     9,    10,     6
+      15,     5,     0,     0,     0,     6,     0,     0,     0,     0,
+      16,    17,    18,    19,    12,     0,     0,     0,     0,     0,
+       8,     9,    10,    11,     7
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,    -7,    -1
+      -3,    -3,    -3,    -1
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -599,26 +599,26 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      13,     3,    20,     5,     3,    20,     5,    14,    15,     3,
-      20,     5,    16,    23,    17,    18,     2,    43,    28,     3,
-       4,     5,    21,    34,    35,    36,    37,    33,    19,     0,
-       6,     7,     8,     9,    10,    24,    25,    11,     3,    20,
+      13,     3,    20,     5,     3,    20,     5,     3,    20,     5,
+       3,    20,     5,    23,    15,    14,     2,    16,    29,     3,
+       4,     5,    21,    35,    39,    36,    37,    38,    34,    17,
+       6,     7,     8,     9,    10,    18,    19,    11,     3,    20,
        5,     3,    20,     5,     3,    20,     5,     3,    20,     5,
-       3,    20,     5,    26,     0,    27,    39,     0,     0,    40,
-       0,     0,    41,     0,     0,    42,     0,    38,     3,    20,
-       5,    29,    30,    31,    32
+      24,    44,    26,    27,     0,    28,    40,     0,    25,    41,
+       0,     0,    42,     0,     0,    43,     3,    20,     5,    30,
+      31,    32,    33
 };
 
 static const yytype_int8 yycheck[] =
 {
-       1,     3,     4,     5,     3,     4,     5,    13,     4,     3,
-       4,     5,     4,    14,     4,     4,     0,    21,    19,     3,
-       4,     5,    21,    24,    25,    26,    27,    21,    19,    -1,
-      14,    15,    16,    17,    18,    13,    13,    21,     3,     4,
+       1,     3,     4,     5,     3,     4,     5,     3,     4,     5,
+       3,     4,     5,    14,     4,    13,     0,     4,    19,     3,
+       4,     5,    21,    24,    20,    26,    27,    28,    21,     4,
+      14,    15,    16,    17,    18,     4,    19,    21,     3,     4,
        5,     3,     4,     5,     3,     4,     5,     3,     4,     5,
-       3,     4,     5,    13,    -1,    13,    21,    -1,    -1,    21,
-      -1,    -1,    21,    -1,    -1,    21,    -1,    20,     3,     4,
-       5,     6,     7,     8,     9
+      13,    21,    13,    13,    -1,    13,    21,    -1,    21,    21,
+      -1,    -1,    21,    -1,    -1,    21,     3,     4,     5,     6,
+       7,     8,     9
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -627,23 +627,23 @@ static const yytype_int8 yystos[] =
 {
        0,    23,     0,     3,     4,     5,    14,    15,    16,    17,
       18,    21,    24,    25,    13,     4,     4,     4,     4,    19,
-       4,    21,    25,    25,    13,    13,    13,    13,    25,     6,
-       7,     8,     9,    21,    25,    25,    25,    25,    20,    21,
-      21,    21,    21,    21
+       4,    21,    25,    25,    13,    21,    13,    13,    13,    25,
+       6,     7,     8,     9,    21,    25,    25,    25,    25,    20,
+      21,    21,    21,    21,    21
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    22,    23,    23,    24,    24,    24,    24,    24,    24,
-      24,    24,    25,    25,    25,    25,    25,    25,    25
+      24,    24,    24,    25,    25,    25,    25,    25,    25,    25
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     2,     1,     2,     5,     5,     5,     5,
-       5,     4,     1,     1,     1,     3,     3,     3,     3
+       0,     2,     0,     2,     1,     2,     3,     5,     5,     5,
+       5,     5,     4,     1,     1,     1,     3,     3,     3,     3
 };
 
 
@@ -1106,14 +1106,20 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 6: /* line: PRINT LPAREN exp RPAREN '\n'  */
+  case 6: /* line: INT VAR '\n'  */
 #line 52 "parser.y"
-                                              { print_value((yyvsp[-2].var)->get_type(), (yyvsp[-2].var)->get_value()); }
+                                   {table.insert((yyvsp[-1].str), std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
 #line 1113 "parser.cpp"
     break;
 
-  case 7: /* line: INT VAR INIT exp '\n'  */
+  case 7: /* line: PRINT LPAREN exp RPAREN '\n'  */
 #line 53 "parser.y"
+                                              { print_value((yyvsp[-2].var)->get_type(), (yyvsp[-2].var)->get_value()); }
+#line 1119 "parser.cpp"
+    break;
+
+  case 8: /* line: INT VAR INIT exp '\n'  */
+#line 54 "parser.y"
                                    {if((yyvsp[-1].var)->get_type() == Type::TYPE_INT){
 
                                         table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>((yyvsp[-1].var)->get_value())));
@@ -1125,51 +1131,51 @@ yyreduce:
                                     }else{yyerror("Tipo incompatible con int");}
                                     
                                    }
-#line 1129 "parser.cpp"
-    break;
-
-  case 8: /* line: DOUBLE VAR INIT exp '\n'  */
-#line 65 "parser.y"
-                                      {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>((yyvsp[-1].var)->get_value())));}
 #line 1135 "parser.cpp"
     break;
 
-  case 9: /* line: BOOL VAR INIT exp '\n'  */
+  case 9: /* line: DOUBLE VAR INIT exp '\n'  */
 #line 66 "parser.y"
-                                    {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>((yyvsp[-1].var)->get_value())));}
+                                      {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>((yyvsp[-1].var)->get_value())));}
 #line 1141 "parser.cpp"
     break;
 
-  case 10: /* line: STR VAR INIT exp '\n'  */
+  case 10: /* line: BOOL VAR INIT exp '\n'  */
 #line 67 "parser.y"
-                                    {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>((yyvsp[-1].var)->get_value())));}
+                                    {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>((yyvsp[-1].var)->get_value())));}
 #line 1147 "parser.cpp"
     break;
 
-  case 11: /* line: VAR INIT exp '\n'  */
+  case 11: /* line: STR VAR INIT exp '\n'  */
 #line 68 "parser.y"
-                                    {table.update((yyvsp[-3].str), std::make_unique<Symbol_base>((yyvsp[-1].var)->get_type(), (yyvsp[-1].var)->get_value()));}
+                                    {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>((yyvsp[-1].var)->get_value())));}
 #line 1153 "parser.cpp"
     break;
 
-  case 12: /* exp: NUM  */
-#line 72 "parser.y"
+  case 12: /* line: VAR INIT exp '\n'  */
+#line 69 "parser.y"
+                                    {table.update((yyvsp[-3].str), std::make_unique<Symbol_base>((yyvsp[-1].var)->get_type(), (yyvsp[-1].var)->get_value()));}
+#line 1159 "parser.cpp"
+    break;
+
+  case 13: /* exp: NUM  */
+#line 73 "parser.y"
                             { 
         (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, (yyvsp[0].num));                
     }
-#line 1161 "parser.cpp"
+#line 1167 "parser.cpp"
     break;
 
-  case 13: /* exp: STRING  */
-#line 75 "parser.y"
+  case 14: /* exp: STRING  */
+#line 76 "parser.y"
                             {
         (yyval.var) = new Symbol_base(Type::TYPE_STRING, (yyvsp[0].str));
     }
-#line 1169 "parser.cpp"
+#line 1175 "parser.cpp"
     break;
 
-  case 14: /* exp: VAR  */
-#line 78 "parser.y"
+  case 15: /* exp: VAR  */
+#line 79 "parser.y"
                             { 
         Symbol_base* aux = table.get((yyvsp[0].str));
         Value v = aux->get_value();
@@ -1177,11 +1183,11 @@ yyreduce:
 
         (yyval.var) = new Symbol_base(t, v);
     }
-#line 1181 "parser.cpp"
+#line 1187 "parser.cpp"
     break;
 
-  case 15: /* exp: exp exp ADD  */
-#line 85 "parser.y"
+  case 16: /* exp: exp exp ADD  */
+#line 86 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1206,11 +1212,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1210 "parser.cpp"
+#line 1216 "parser.cpp"
     break;
 
-  case 16: /* exp: exp exp SUB  */
-#line 109 "parser.y"
+  case 17: /* exp: exp exp SUB  */
+#line 110 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1235,11 +1241,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1239 "parser.cpp"
+#line 1245 "parser.cpp"
     break;
 
-  case 17: /* exp: exp exp MUL  */
-#line 133 "parser.y"
+  case 18: /* exp: exp exp MUL  */
+#line 134 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1264,11 +1270,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1268 "parser.cpp"
+#line 1274 "parser.cpp"
     break;
 
-  case 18: /* exp: exp exp DIV  */
-#line 157 "parser.y"
+  case 19: /* exp: exp exp DIV  */
+#line 158 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1293,11 +1299,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1297 "parser.cpp"
+#line 1303 "parser.cpp"
     break;
 
 
-#line 1301 "parser.cpp"
+#line 1307 "parser.cpp"
 
       default: break;
     }
@@ -1490,7 +1496,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 185 "parser.y"
+#line 186 "parser.y"
 
 
 void print_value(Type t, Value v) {
