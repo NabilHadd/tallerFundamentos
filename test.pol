@@ -1,4 +1,4 @@
-int a
-a = 1
-a = a a+ a+ a+ 
-cout(a)
+double b
+int a = 3 4+ 8 -3 + *
+b = a
+cout(b)

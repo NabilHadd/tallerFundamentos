@@ -5,6 +5,6 @@
 
 void print_value(Type t, Value v);
 std::string to_string_value(Type t, const Value& v);
-int yyerror(const char*);
+int yyerror(const char* s);
 
 #endif

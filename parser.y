@@ -48,7 +48,10 @@ input:
 
 line:
     '\n'
-    | exp '\n'
+    | exp '\n'                      
+    | DOUBLE VAR '\n'              {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));}
+    | BOOL VAR '\n'                {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));} 
+    | STR VAR '\n'                 {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));}
     | INT VAR '\n'                 {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
     | PRINT LPAREN exp RPAREN '\n'            { print_value($3->get_type(), $3->get_value()); }
     | INT VAR INIT exp '\n'        {if($4->get_type() == Type::TYPE_INT){
@@ -77,7 +80,7 @@ line:
 
                                     }else if(var->get_type() == Type::TYPE_INT and t == Type::TYPE_DOUBLE){
 
-                                        table.update(name, std::make_unique<Symbol_base>(t, static_cast<int>(std::get<double>(v))));
+                                        table.update(name, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>(v))));
 
                                     }else if(var->get_type() == Type::TYPE_DOUBLE and t == Type::TYPE_INT){
 
@@ -223,22 +226,27 @@ exp:
 %%
 
 void print_value(Type t, Value v) {
-    Type type = t;
-    Value value = v;
-
-    switch(type){
-        case Type::TYPE_INT: std::cout << std::get<int>(value) << std::endl; break;
-        case Type::TYPE_DOUBLE: std::cout << std::get<double>(value) << std::endl; break;
-        case Type::TYPE_BOOL: 
-            std::cout << (std::get<bool>(value) ? "true" : "false") << std::endl;
-            break;
-        case Type::TYPE_STRING: std::cout << std::get<std::string>(value) << std::endl; break;
-        default: std::cout << "<16800002x1>" << std::endl;
-    }
+    std::visit([t](auto&& arg){
+        switch (t){
+            case Type::TYPE_INT:
+            case Type::TYPE_DOUBLE:
+                std::cout << arg << std::endl;
+                break;
+            case Type::TYPE_BOOL:
+                //std::cout << (arg ? "true": "false") << std::endl;
+                break;
+            case Type::TYPE_STRING:
+                std::cout << arg << std::endl;
+                break;
+            default:
+                std::cout<<"no deberia entrar aca nunca"<<std::endl;
+        }    
+    }, v);
 }
 
-int yyerror(const char*){
-    std::cerr << "syntax error: " << std::endl;
+int yyerror(const char* s){
+    std::cerr << "syntax error: "<< s << std::endl;
+    exit(EXIT_FAILURE);
     return 0;
 }
 
