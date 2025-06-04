@@ -75,10 +75,11 @@
 #include "Symbol_table.h"
 #include "utils.h"
 extern int yylex();
+extern int yylineno;
 Symbol_table table;
 
 
-#line 82 "parser.cpp"
+#line 83 "parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -519,9 +520,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    45,    45,    46,    50,    51,    52,    53,    54,    55,
-      56,    57,    69,    70,    71,    72,   113,   116,   119,   126,
-     150,   174,   198
+       0,    46,    46,    47,    51,    52,    53,    54,    55,    56,
+      57,    58,    70,    81,    82,    83,   124,   127,   130,   137,
+     161,   185,   209
 };
 #endif
 
@@ -1110,37 +1111,37 @@ yyreduce:
   switch (yyn)
     {
   case 6: /* line: DOUBLE VAR '\n'  */
-#line 52 "parser.y"
+#line 53 "parser.y"
                                    {table.insert((yyvsp[-1].str), std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));}
-#line 1116 "parser.cpp"
+#line 1117 "parser.cpp"
     break;
 
   case 7: /* line: BOOL VAR '\n'  */
-#line 53 "parser.y"
+#line 54 "parser.y"
                                    {table.insert((yyvsp[-1].str), std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));}
-#line 1122 "parser.cpp"
+#line 1123 "parser.cpp"
     break;
 
   case 8: /* line: STR VAR '\n'  */
-#line 54 "parser.y"
+#line 55 "parser.y"
                                    {table.insert((yyvsp[-1].str), std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));}
-#line 1128 "parser.cpp"
+#line 1129 "parser.cpp"
     break;
 
   case 9: /* line: INT VAR '\n'  */
-#line 55 "parser.y"
+#line 56 "parser.y"
                                    {table.insert((yyvsp[-1].str), std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
-#line 1134 "parser.cpp"
+#line 1135 "parser.cpp"
     break;
 
   case 10: /* line: PRINT LPAREN exp RPAREN '\n'  */
-#line 56 "parser.y"
+#line 57 "parser.y"
                                               { print_value((yyvsp[-2].var)->get_type(), (yyvsp[-2].var)->get_value()); }
-#line 1140 "parser.cpp"
+#line 1141 "parser.cpp"
     break;
 
   case 11: /* line: INT VAR INIT exp '\n'  */
-#line 57 "parser.y"
+#line 58 "parser.y"
                                    {if((yyvsp[-1].var)->get_type() == Type::TYPE_INT){
 
                                         table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>((yyvsp[-1].var)->get_value())));
@@ -1152,29 +1153,39 @@ yyreduce:
                                     }else{yyerror("Tipo incompatible con int");}
                                     
                                    }
-#line 1156 "parser.cpp"
+#line 1157 "parser.cpp"
     break;
 
   case 12: /* line: DOUBLE VAR INIT exp '\n'  */
-#line 69 "parser.y"
-                                      {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>((yyvsp[-1].var)->get_value())));}
-#line 1162 "parser.cpp"
+#line 70 "parser.y"
+                                   {if((yyvsp[-1].var)->get_type() == Type::TYPE_INT){
+
+                                        table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<double>(std::get<int>((yyvsp[-1].var)->get_value()))));
+
+                                    }else if((yyvsp[-1].var)->get_type() == Type::TYPE_DOUBLE){
+
+                                        table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<double>( (yyvsp[-1].var)->get_value() )));
+
+                                    }else{yyerror("Tipo incompatible con double");}
+                                    
+                                   }
+#line 1173 "parser.cpp"
     break;
 
   case 13: /* line: BOOL VAR INIT exp '\n'  */
-#line 70 "parser.y"
+#line 81 "parser.y"
                                     {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>((yyvsp[-1].var)->get_value())));}
-#line 1168 "parser.cpp"
+#line 1179 "parser.cpp"
     break;
 
   case 14: /* line: STR VAR INIT exp '\n'  */
-#line 71 "parser.y"
+#line 82 "parser.y"
                                     {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>((yyvsp[-1].var)->get_value())));}
-#line 1174 "parser.cpp"
+#line 1185 "parser.cpp"
     break;
 
   case 15: /* line: VAR INIT exp '\n'  */
-#line 72 "parser.y"
+#line 83 "parser.y"
                                     {
                                     std::string name = (yyvsp[-3].str);
                                     Type t = (yyvsp[-1].var)->get_type();
@@ -1210,27 +1221,27 @@ yyreduce:
                                         yyerror("tipos incompatibles");
                                     }
                                     }
-#line 1214 "parser.cpp"
+#line 1225 "parser.cpp"
     break;
 
   case 16: /* exp: NUM  */
-#line 113 "parser.y"
+#line 124 "parser.y"
                             { 
         (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, (yyvsp[0].num));                
     }
-#line 1222 "parser.cpp"
+#line 1233 "parser.cpp"
     break;
 
   case 17: /* exp: STRING  */
-#line 116 "parser.y"
+#line 127 "parser.y"
                             {
         (yyval.var) = new Symbol_base(Type::TYPE_STRING, (yyvsp[0].str));
     }
-#line 1230 "parser.cpp"
+#line 1241 "parser.cpp"
     break;
 
   case 18: /* exp: VAR  */
-#line 119 "parser.y"
+#line 130 "parser.y"
                             { 
         Symbol_base* aux = table.get((yyvsp[0].str));
         Value v = aux->get_value();
@@ -1238,11 +1249,11 @@ yyreduce:
 
         (yyval.var) = new Symbol_base(t, v);
     }
-#line 1242 "parser.cpp"
+#line 1253 "parser.cpp"
     break;
 
   case 19: /* exp: exp exp ADD  */
-#line 126 "parser.y"
+#line 137 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1267,11 +1278,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1271 "parser.cpp"
+#line 1282 "parser.cpp"
     break;
 
   case 20: /* exp: exp exp SUB  */
-#line 150 "parser.y"
+#line 161 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1296,11 +1307,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1300 "parser.cpp"
+#line 1311 "parser.cpp"
     break;
 
   case 21: /* exp: exp exp MUL  */
-#line 174 "parser.y"
+#line 185 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1325,11 +1336,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1329 "parser.cpp"
+#line 1340 "parser.cpp"
     break;
 
   case 22: /* exp: exp exp DIV  */
-#line 198 "parser.y"
+#line 209 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1354,11 +1365,11 @@ yyreduce:
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }
     }
-#line 1358 "parser.cpp"
+#line 1369 "parser.cpp"
     break;
 
 
-#line 1362 "parser.cpp"
+#line 1373 "parser.cpp"
 
       default: break;
     }
@@ -1551,7 +1562,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 226 "parser.y"
+#line 237 "parser.y"
 
 
 void print_value(Type t, Value v) {
@@ -1574,7 +1585,7 @@ void print_value(Type t, Value v) {
 }
 
 int yyerror(const char* s){
-    std::cerr << "syntax error: "<< s << std::endl;
+    std::cerr << "Syntax error in line "<< yylineno << ": "<< s << std::endl;
     exit(EXIT_FAILURE);
     return 0;
 }

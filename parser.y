@@ -5,6 +5,7 @@
 #include "Symbol_table.h"
 #include "utils.h"
 extern int yylex();
+extern int yylineno;
 Symbol_table table;
 
 %}
@@ -66,7 +67,17 @@ line:
                                     
                                    }
 
-    | DOUBLE VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>($4->get_value())));}
+    | DOUBLE VAR INIT exp '\n'     {if($4->get_type() == Type::TYPE_INT){
+
+                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<double>(std::get<int>($4->get_value()))));
+
+                                    }else if($4->get_type() == Type::TYPE_DOUBLE){
+
+                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<double>( $4->get_value() )));
+
+                                    }else{yyerror("Tipo incompatible con double");}
+                                    
+                                   }
     | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>($4->get_value())));}
     | STR VAR INIT exp '\n'         {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>($4->get_value())));}//aplicar casteo a string
     | VAR INIT exp '\n'             {
@@ -245,7 +256,7 @@ void print_value(Type t, Value v) {
 }
 
 int yyerror(const char* s){
-    std::cerr << "syntax error: "<< s << std::endl;
+    std::cerr << "Syntax error in line "<< yylineno << ": "<< s << std::endl;
     exit(EXIT_FAILURE);
     return 0;
 }

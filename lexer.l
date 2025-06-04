@@ -2,7 +2,11 @@
 #include "Symbol_table.h"
 #include "parser.hpp"
 #include <stdlib.h>
+
+extern int yylineno;
 %}
+
+%option yylineno
 
 %%
 -?[0-9]+(\.[0-9]+)?         { yylval.num = atof(yytext); return NUM; }

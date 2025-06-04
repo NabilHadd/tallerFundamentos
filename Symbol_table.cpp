@@ -25,6 +25,7 @@ Symbol_base* Symbol_table::get(const std::string& name) const {
     if(it != table.end()) {
         return it->second.get();
     } else {
+        yyerror("variable no encontrada");
         return nullptr;
     }
 }

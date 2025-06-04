@@ -1,4 +1,6 @@
-double b
-int a = 3 4+ 8 -3 + *
-b = a
-cout(b)
+double a = 3
+int b = 5
+int c
+
+c = a b +
+cout(c c+)
