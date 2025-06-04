@@ -139,36 +139,48 @@ exp:
             Type t2 = $2->get_type();
             Value v1 = $1->get_value();
             Value v2 = $2->get_value();
+            Value res;
+
         if(t1 == t2 ){
-            int res;
-            std::visit([&res](auto&& a, auto&& b){
-                res = a + b;
-            },v1, v2 );
-            $$ = new Symbol_base(t, res);
+            Value res;
+            std::visit([&](auto&& a){
+                std::visit([&](auto&& b){
+                    res = a + b;
+                }, v2);
+            },v1);
+            $$ = new Symbol_base(t1, res);
+            //parser.y:145:23:   required from here
+            //parser.y:147:29: error: no match for ‘operator+’ (operand types are ‘int’ and ‘std::__cxx11::basic_string<char>’)
+            //147 |                     res = a + b;
+            //|   
+
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
             int a = std::get<int>(v1);
             int b = std::get<int>(v2);
-            int res = a + b;
+            res = a + b;
             $$ = new Symbol_base(Type::TYPE_INT, res);
 
         } else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
             double a = std::get<double>(v1);
             int b = std::get<int>(v2);
-            double res = a + b;
+            res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
             int a = std::get<int>(v1);
             double b = std::get<double>(v2);
-            double res = a + b;
+            res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+
         }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
             double a = std::get<double>(v1);
             double b = std::get<double>(v2);
-            double res = a + b;
+            res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+
         }else if(t1 == Type::TYPE_STRING && t2 == Type::TYPE_STRING){
             //std::string a = std::get<>
             std::cout<<"";        
+
         }
     }
     | exp exp SUB           {

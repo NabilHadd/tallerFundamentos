@@ -522,7 +522,7 @@ static const yytype_uint8 yyrline[] =
 {
        0,    46,    46,    47,    51,    52,    53,    54,    55,    56,
       57,    58,    70,    81,    82,    83,   124,   127,   130,   137,
-     174,   200,   226
+     177,   203,   229
 };
 #endif
 
@@ -1259,43 +1259,46 @@ yyreduce:
             Type t2 = (yyvsp[-1].var)->get_type();
             Value v1 = (yyvsp[-2].var)->get_value();
             Value v2 = (yyvsp[-1].var)->get_value();
+            Value res;
         if(t1 == t2 ){
-            int res;
-            std::visit([&res](auto&& a, auto&& b){
-                res = a + b;
-            },v1, v2 );
-            (yyval.var) = new Symbol_base(t, res);
+            Value res;
+            std::visit([&](auto&& a){
+                std::visit([&](auto&& b){
+                    res = a + b;
+                }, v2);
+            },v1);
+            (yyval.var) = new Symbol_base(t1, res);
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
             int a = std::get<int>(v1);
             int b = std::get<int>(v2);
-            int res = a + b;
+            res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_INT, res);
 
         } else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
             double a = std::get<double>(v1);
             int b = std::get<int>(v2);
-            double res = a + b;
+            res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
             int a = std::get<int>(v1);
             double b = std::get<double>(v2);
-            double res = a + b;
+            res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
             double a = std::get<double>(v1);
             double b = std::get<double>(v2);
-            double res = a + b;
+            res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
         }else if(t1 == Type::TYPE_STRING && t2 == Type::TYPE_STRING){
             //std::string a = std::get<>
             std::cout<<"";        
         }
     }
-#line 1295 "parser.cpp"
+#line 1298 "parser.cpp"
     break;
 
   case 20: /* exp: exp exp SUB  */
-#line 174 "parser.y"
+#line 177 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1322,11 +1325,11 @@ yyreduce:
             yyerror("tipos incompatibles para resta");
         }
     }
-#line 1326 "parser.cpp"
+#line 1329 "parser.cpp"
     break;
 
   case 21: /* exp: exp exp MUL  */
-#line 200 "parser.y"
+#line 203 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1353,11 +1356,11 @@ yyreduce:
             yyerror("tipos incompatibles para multiplicacion");
         }
     }
-#line 1357 "parser.cpp"
+#line 1360 "parser.cpp"
     break;
 
   case 22: /* exp: exp exp DIV  */
-#line 226 "parser.y"
+#line 229 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1384,11 +1387,11 @@ yyreduce:
             yyerror("tipos incompatibles para division");        
         }
     }
-#line 1388 "parser.cpp"
+#line 1391 "parser.cpp"
     break;
 
 
-#line 1392 "parser.cpp"
+#line 1395 "parser.cpp"
 
       default: break;
     }
@@ -1581,7 +1584,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 256 "parser.y"
+#line 259 "parser.y"
 
 
 void print_value(Type t, Value v) {
