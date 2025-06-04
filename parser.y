@@ -67,19 +67,33 @@ line:
     | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>($4->get_value())));}
     | STR VAR INIT exp '\n'         {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>($4->get_value())));}//aplicar casteo a string
     | VAR INIT exp '\n'             {
-                                    Symbol_base* var = table.get($1);
-                                    if(var->get_type() == $3->get_type()){
-                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), $3->get_value()));
-                                    }else if(var->get_type() == Type::TYPE_INT and $3->get_type() == Type::TYPE_DOUBLE){
-                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<int>(std::get<double>( $3->get_value()))));
-                                    }else if(var->get_type() == Type::TYPE_DOUBLE and $3->get_type() == Type::TYPE_INT){
-                                        table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<double>(std::get<int>( $3->get_value()))));
+                                    std::string name = $1;
+                                    Type t = $3->get_type();
+                                    Value v = $3->get_value();
+                                    Symbol_base* var = table.get(name);
+                                    if(var->get_type() == t){
+
+                                        table.update(name, std::make_unique<Symbol_base>(t, v));
+
+                                    }else if(var->get_type() == Type::TYPE_INT and t == Type::TYPE_DOUBLE){
+
+                                        table.update(name, std::make_unique<Symbol_base>(t, static_cast<int>(std::get<double>(v))));
+
+                                    }else if(var->get_type() == Type::TYPE_DOUBLE and t == Type::TYPE_INT){
+
+                                        table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
+
                                     }else if(var->get_type() == Type::TYPE_STRING){
-                                        std::visit([](auto&& arg){
-                                            table.update($1, std::make_unique<Symbol_base>($3->get_type(), static_cast<std::string>(arg)));
-                                        }, $3->get_value());
+
+                                        std::visit([&](auto&& arg){
+                                            table.update(name, std::make_unique<Symbol_base>(t, static_cast<std::string>(arg)));
+                                        }, v);
                                     }else{ yyerror("tipos incompatibles");}
                                     }
+//parser.y:88:51:   required from here
+//parser.y:89:97: error: no matching function for call to ‘std::__cxx11::basic_string<char>::basic_string(int&)’
+//   89 |                                             table.update(name, std::make_unique<Symbol_base>(t, static_cast<std::string>(arg)));
+
     ;
 
 
