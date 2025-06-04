@@ -160,45 +160,45 @@ exp:
             Value res;
 
        if (t1 == t2) {
-    Value res;
-    std::visit([&](auto&& a, auto&& b) {
-        using A = std::decay_t<decltype(a)>;
-        using B = std::decay_t<decltype(b)>;
+            Value res;
+            std::visit([&](auto&& a, auto&& b) {
+                using A = std::decay_t<decltype(a)>;
+                using B = std::decay_t<decltype(b)>;
 
-        if constexpr (std::is_same_v<A, B>) {
-            res = a + b;
-        } else {
-            yyerror("Error interno: combinación de tipos inválida");
-        }
-    }, v1, v2);
-    $$ = new Symbol_base(t1, res);
-}else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
-            int a = std::get<int>(v1);
-            int b = std::get<int>(v2);
-            res = a + b;
-            $$ = new Symbol_base(Type::TYPE_INT, res);
-
-        } else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
+                if constexpr (std::is_same_v<A, B>) {
+                    res = a + b;
+                } else {
+                    yyerror("Error interno: combinación de tipos inválida");
+                }
+            }, v1, v2);
+            $$ = new Symbol_base(t1, res);
+        }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
             double a = std::get<double>(v1);
             int b = std::get<int>(v2);
             res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
+        }else if(t1 == Type::TYPE_INT && t2 == Type::TYPE_DOUBLE){
             int a = std::get<int>(v1);
             double b = std::get<double>(v2);
             res = a + b;
             $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
 
-        }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
-            double a = std::get<double>(v1);
-            double b = std::get<double>(v2);
-            res = a + b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
+        }else if(t1 == Type::TYPE_STRING){
 
-        }else if(t1 == Type::TYPE_STRING && t2 == Type::TYPE_STRING){
-            //std::string a = std::get<>
-            std::cout<<"";        
+            std::visit([&](auto&& a, auto&& b) {
+                std::string str_val;
+                using A = std::decay_t<decltype(a)>;
+                using B = std::decay_t<decltype(b)>;
+                if constexpr (std::is_same_v<B, bool>)
+                    str_val = b ? "true" : "false";
+                else
+                    str_val = std::to_string(b);
+                res = a + str_val;
+            }, v1, v2);
 
+            
+        }else if(t2 == Type::TYPE_STRING){
+            
         }
     }
     | exp exp SUB           {

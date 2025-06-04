@@ -1,3 +1,4 @@
-string a = "a"
-string b = "b"
+int a = 1
+int b = 1
+string c = "hola este es el resultado de mi suma"
 cout(a b +)
