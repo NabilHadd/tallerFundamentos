@@ -79,12 +79,29 @@ line:
                                     
                                    }
     | BOOL VAR INIT exp '\n'        {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, std::get<bool>($4->get_value())));}
-    | STR VAR INIT exp '\n'         {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>($4->get_value())));}//aplicar casteo a string
+
+    | STR VAR INIT exp '\n'         {
+                                    std::string name = $2;
+                                    Symbol_base* val = $4;
+                                    std::visit([&](auto&& arg) {
+                                            std::string str_val;
+                                            using T = std::decay_t<decltype(arg)>;
+                                            if constexpr (std::is_same_v<T, std::string>)
+                                                str_val = arg;
+                                            else if constexpr (std::is_same_v<T, bool>)
+                                                str_val = arg ? "true" : "false";
+                                            else
+                                                str_val = std::to_string(arg);
+                                            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+                                    }, val->get_value());
+                                    }
+
     | VAR INIT exp '\n'             {
                                     std::string name = $1;
                                     Type t = $3->get_type();
                                     Value v = $3->get_value();
                                     Symbol_base* var = table.get(name);
+
                                     if(var->get_type() == t){
 
                                         table.update(name, std::make_unique<Symbol_base>(t, v));
@@ -98,7 +115,7 @@ line:
                                         table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
 
                                     }else if (var->get_type() == Type::TYPE_STRING) {
-                                        std::string name = $1;
+
                                         Symbol_base* val = $3;
                                         std::visit([&](auto&& arg) {
                                             std::string str_val;
@@ -111,6 +128,7 @@ line:
                                                 str_val = std::to_string(arg);
                                             table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
                                         }, val->get_value());
+
                                     } else {
                                         yyerror("tipos incompatibles");
                                     }
@@ -144,14 +162,12 @@ exp:
        if (t1 == t2) {
             Value res;
             std::visit([&](auto&& a, auto&& b) {
-                using A = std::decay_t<decltype(a)>;
-                using B = std::decay_t<decltype(b)>;
-
-                if constexpr (std::is_same_v<A, B>) {
+                using T = std::decay_t<decltype(a)>;
+                if constexpr (std::is_same_v<T, decltype(b)>) {
                     res = a + b;
                 } else {
-                    yyerror("Error interno: combinación de tipos inválida");
-                 }
+                    yyerror("Error interno: tipos incompatibles aunque t1 == t2");
+                }
             }, v1, v2);
             $$ = new Symbol_base(t1, res);
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){

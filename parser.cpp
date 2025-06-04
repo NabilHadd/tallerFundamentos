@@ -521,8 +521,8 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    46,    46,    47,    51,    52,    53,    54,    55,    56,
-      57,    58,    70,    81,    82,    83,   124,   127,   130,   137,
-     177,   203,   229
+      57,    58,    70,    81,    83,    99,   142,   145,   148,   155,
+     202,   228,   254
 };
 #endif
 
@@ -1179,18 +1179,33 @@ yyreduce:
     break;
 
   case 14: /* line: STR VAR INIT exp '\n'  */
-#line 82 "parser.y"
-                                    {table.insert((yyvsp[-3].str), std::make_unique<Symbol_base>(Type::TYPE_STRING, std::get<std::string>((yyvsp[-1].var)->get_value())));}
-#line 1185 "parser.cpp"
+#line 83 "parser.y"
+                                    {
+                                    std::string name = (yyvsp[-3].str);
+                                    Symbol_base* val = (yyvsp[-1].var);
+                                    std::visit([&](auto&& arg) {
+                                            std::string str_val;
+                                            using T = std::decay_t<decltype(arg)>;
+                                            if constexpr (std::is_same_v<T, std::string>)
+                                                str_val = arg;
+                                            else if constexpr (std::is_same_v<T, bool>)
+                                                str_val = arg ? "true" : "false";
+                                            else
+                                                str_val = std::to_string(arg);
+                                            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+                                    }, val->get_value());
+                                    }
+#line 1199 "parser.cpp"
     break;
 
   case 15: /* line: VAR INIT exp '\n'  */
-#line 83 "parser.y"
+#line 99 "parser.y"
                                     {
                                     std::string name = (yyvsp[-3].str);
                                     Type t = (yyvsp[-1].var)->get_type();
                                     Value v = (yyvsp[-1].var)->get_value();
                                     Symbol_base* var = table.get(name);
+
                                     if(var->get_type() == t){
 
                                         table.update(name, std::make_unique<Symbol_base>(t, v));
@@ -1204,7 +1219,7 @@ yyreduce:
                                         table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
 
                                     }else if (var->get_type() == Type::TYPE_STRING) {
-                                        std::string name = (yyvsp[-3].str);
+
                                         Symbol_base* val = (yyvsp[-1].var);
                                         std::visit([&](auto&& arg) {
                                             std::string str_val;
@@ -1217,31 +1232,32 @@ yyreduce:
                                                 str_val = std::to_string(arg);
                                             table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
                                         }, val->get_value());
+
                                     } else {
                                         yyerror("tipos incompatibles");
                                     }
                                     }
-#line 1225 "parser.cpp"
-    break;
-
-  case 16: /* exp: NUM  */
-#line 124 "parser.y"
-                            { 
-        (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, (yyvsp[0].num));                
-    }
-#line 1233 "parser.cpp"
-    break;
-
-  case 17: /* exp: STRING  */
-#line 127 "parser.y"
-                            {
-        (yyval.var) = new Symbol_base(Type::TYPE_STRING, (yyvsp[0].str));
-    }
 #line 1241 "parser.cpp"
     break;
 
+  case 16: /* exp: NUM  */
+#line 142 "parser.y"
+                            { 
+        (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, (yyvsp[0].num));                
+    }
+#line 1249 "parser.cpp"
+    break;
+
+  case 17: /* exp: STRING  */
+#line 145 "parser.y"
+                            {
+        (yyval.var) = new Symbol_base(Type::TYPE_STRING, (yyvsp[0].str));
+    }
+#line 1257 "parser.cpp"
+    break;
+
   case 18: /* exp: VAR  */
-#line 130 "parser.y"
+#line 148 "parser.y"
                             { 
         Symbol_base* aux = table.get((yyvsp[0].str));
         Value v = aux->get_value();
@@ -1249,24 +1265,28 @@ yyreduce:
 
         (yyval.var) = new Symbol_base(t, v);
     }
-#line 1253 "parser.cpp"
+#line 1269 "parser.cpp"
     break;
 
   case 19: /* exp: exp exp ADD  */
-#line 137 "parser.y"
+#line 155 "parser.y"
                             {
             Type t1 = (yyvsp[-2].var)->get_type();
             Type t2 = (yyvsp[-1].var)->get_type();
             Value v1 = (yyvsp[-2].var)->get_value();
             Value v2 = (yyvsp[-1].var)->get_value();
             Value res;
-        if(t1 == t2 ){
+
+       if (t1 == t2) {
             Value res;
-            std::visit([&](auto&& a){
-                std::visit([&](auto&& b){
+            std::visit([&](auto&& a, auto&& b) {
+                using T = std::decay_t<decltype(a)>;
+                if constexpr (std::is_same_v<T, decltype(b)>) {
                     res = a + b;
-                }, v2);
-            },v1);
+                } else {
+                    yyerror("Error interno: tipos incompatibles aunque t1 == t2");
+                }
+            }, v1, v2);
             (yyval.var) = new Symbol_base(t1, res);
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
             int a = std::get<int>(v1);
@@ -1284,21 +1304,24 @@ yyreduce:
             double b = std::get<double>(v2);
             res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
+
         }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
             double a = std::get<double>(v1);
             double b = std::get<double>(v2);
             res = a + b;
             (yyval.var) = new Symbol_base(Type::TYPE_DOUBLE, res);
+
         }else if(t1 == Type::TYPE_STRING && t2 == Type::TYPE_STRING){
             //std::string a = std::get<>
             std::cout<<"";        
+
         }
     }
-#line 1298 "parser.cpp"
+#line 1321 "parser.cpp"
     break;
 
   case 20: /* exp: exp exp SUB  */
-#line 177 "parser.y"
+#line 202 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1325,11 +1348,11 @@ yyreduce:
             yyerror("tipos incompatibles para resta");
         }
     }
-#line 1329 "parser.cpp"
+#line 1352 "parser.cpp"
     break;
 
   case 21: /* exp: exp exp MUL  */
-#line 203 "parser.y"
+#line 228 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1356,11 +1379,11 @@ yyreduce:
             yyerror("tipos incompatibles para multiplicacion");
         }
     }
-#line 1360 "parser.cpp"
+#line 1383 "parser.cpp"
     break;
 
   case 22: /* exp: exp exp DIV  */
-#line 229 "parser.y"
+#line 254 "parser.y"
                             {
         if ((yyvsp[-2].var)->get_type() == Type::TYPE_INT && (yyvsp[-1].var)->get_type() == Type::TYPE_INT){
             int a = std::get<int>((yyvsp[-2].var)->get_value());
@@ -1387,11 +1410,11 @@ yyreduce:
             yyerror("tipos incompatibles para division");        
         }
     }
-#line 1391 "parser.cpp"
+#line 1414 "parser.cpp"
     break;
 
 
-#line 1395 "parser.cpp"
+#line 1418 "parser.cpp"
 
       default: break;
     }
@@ -1584,7 +1607,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 259 "parser.y"
+#line 284 "parser.y"
 
 
 void print_value(Type t, Value v) {
