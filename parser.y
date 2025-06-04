@@ -83,16 +83,24 @@ line:
 
                                         table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
 
-                                    }else if(var->get_type() == Type::TYPE_STRING){
-
-                                        std::visit([&](auto&& arg){
-                                            table.update(name, std::make_unique<Symbol_base>(t, static_cast<std::string>(arg)));
-                                        }, v);
-                                    }else{ yyerror("tipos incompatibles");}
+                                    }else if (var->get_type() == Type::TYPE_STRING) {
+                                        std::string name = $1;
+                                        Symbol_base* val = $3;
+                                        std::visit([&](auto&& arg) {
+                                            std::string str_val;
+                                            using T = std::decay_t<decltype(arg)>;
+                                            if constexpr (std::is_same_v<T, std::string>)
+                                                str_val = arg;
+                                            else if constexpr (std::is_same_v<T, bool>)
+                                                str_val = arg ? "true" : "false";
+                                            else
+                                                str_val = std::to_string(arg);
+                                            table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+                                        }, val->get_value());
+                                    } else {
+                                        yyerror("tipos incompatibles");
                                     }
-//parser.y:88:51:   required from here
-//parser.y:89:97: error: no matching function for call to ‘std::__cxx11::basic_string<char>::basic_string(int&)’
-//   89 |                                             table.update(name, std::make_unique<Symbol_base>(t, static_cast<std::string>(arg)));
+                                    }
 
     ;
 
