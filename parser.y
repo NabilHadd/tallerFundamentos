@@ -144,12 +144,14 @@ exp:
        if (t1 == t2) {
             Value res;
             std::visit([&](auto&& a, auto&& b) {
-                using T = std::decay_t<decltype(a)>;
-                if constexpr (std::is_same_v<T, decltype(b)>) {
+                using A = std::decay_t<decltype(a)>;
+                using B = std::decay_t<decltype(b)>;
+
+                if constexpr (std::is_same_v<A, B>) {
                     res = a + b;
                 } else {
-                    yyerror("Error interno: tipos incompatibles aunque t1 == t2");
-                }
+                    yyerror("Error interno: combinación de tipos inválida");
+                 }
             }, v1, v2);
             $$ = new Symbol_base(t1, res);
         }else if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
