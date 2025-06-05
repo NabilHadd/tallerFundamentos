@@ -5,7 +5,7 @@ Logic_op::Logic_op(Logic op){
     this->op = op;
 }
 
-Logic Logic_op::get_op(){ return this->op;}
+Logic Logic_op::get_op() const { return this->op;}
 //----------------------------------------------
 
 
@@ -273,3 +273,29 @@ void Sub_node::execute(){
 
 
 
+//Nodo para las operaciones logicas--------------------------------------------------------
+Logic_node::Logic_node(Symbol_base* exp1, Symbol_base* exp2, Logic_op* l_op){
+    this->t1 = exp1->get_type();
+    this->t2 = exp2->get_type();
+    this->v1 = exp1->get_value();
+    this->v2 = exp2->get_value();
+    this->op = l_op->get_op();
+}
+
+Symbol_base* Logic_node::get_Symbol(){return this->aux;}
+
+void Logic_node::execute(){
+    this->aux = new Symbol_base(Type::TYPE_BOOL, true);
+    if(this->op == Logic::IS_EQ){
+        (v1 == v2) ? this->aux->set_value(true) : this->aux->set_value(false);
+    }else if(this->op == Logic::IS_GR){
+        (v1 > v2) ?  this->aux->set_value(true)  : this->aux->set_value(false);
+    }else if(this->op == Logic::IS_WR){
+        (v1 < v2) ?  this->aux->set_value(true)  : this->aux->set_value(false);
+    }else if(this->op == Logic::IS_EQ_GR){
+        (v1 >= v2) ? this->aux->set_value(true) : this->aux->set_value(false);
+    }else if(this->op == Logic::IS_EQ_WR){
+        (v1 <= v2) ? this->aux->set_value(true) : this->aux->set_value(false);
+    }
+}
+//-----------------------------------------------------------------------------------------

@@ -208,7 +208,7 @@ exp:
         $$ = new Symbol_base(t, v);
     }
     | exp exp L_op {
-        std::cout<<"en consruccion"<< std::endl;
+        Logic_node node($1, $2, $3->get_op());
     }
     | exp exp ADD           {
         
@@ -311,7 +311,7 @@ L_op: EQ {
         $$ = new Logic_op(Logic::IS_WR);
     } | EQ_GR {
         $$ = new Logic_op(Logic::IS_EQ_GR);
-    } | EQ WR {
+    } | EQ_WR {
         $$ = new Logic_op(Logic::IS_EQ_WR);
     }
     ;

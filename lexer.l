@@ -1,5 +1,6 @@
 %{
 #include "Symbol_table.h"
+#include "nodes.h"
 #include "parser.hpp"
 #include <stdlib.h>
 

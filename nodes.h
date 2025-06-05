@@ -123,3 +123,17 @@ public:
     void execute() override;
 };
 
+class Logic_node : public Statment_node {
+private:
+    Type t1;
+    Type t2;
+    Value v1;
+    Value v2;
+    Logic op;
+    Symbol_base* aux;
+public:
+    Logic_node(Symbol_base* exp1, Symbol_base* exp2, Logic_op* l_op);
+    void execute() override;
+};
+
+

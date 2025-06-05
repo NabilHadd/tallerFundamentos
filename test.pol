@@ -1,6 +1,6 @@
 double b = 4.32432
 int a = 1
 double x
-x = a b -
+x = a b +
 double z = x
 cout("es double " z +)
