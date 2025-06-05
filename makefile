@@ -11,7 +11,7 @@ BISON_HEADER = parser.hpp
 FLEX_SRC = lexer.cpp
 
 # Otros archivos fuente
-CPP_SRCS = Symbol_base.cpp Symbol_table.cpp
+CPP_SRCS = Symbol_base.cpp Symbol_table.cpp nodes.cpp
 
 # Compilador y flags
 CXX = g++

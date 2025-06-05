@@ -4,6 +4,7 @@
 #include <math.h>
 #include "Symbol_table.h"
 #include "utils.h"
+#include "nodes.h"
 extern int yylex();
 extern int yylineno;
 Symbol_table table;
@@ -26,6 +27,7 @@ Symbol_table table;
 %token ADD SUB MUL DIV POW INCP POSTINC 
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
+%token IF ELIF ELSE WHILE
 
 %nonassoc ADD
 %nonassoc SUB
@@ -38,6 +40,8 @@ Symbol_table table;
 %nonassoc INIT
 %nonassoc LPAREN
 %nonassoc RPAREN
+%nonassoc LBRACE
+%nonassoc RBRACE
 
 
 
@@ -49,124 +53,162 @@ input:
     | input line
     ;
 
-line:
-    '\n'
-    | exp '\n'                      
-    | DOUBLE VAR '\n'              {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));}
-    | BOOL VAR '\n'                {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));} 
-    | STR VAR '\n'                 {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));}
-    | INT VAR '\n'                  {table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));}
-    | PRINT LPAREN exp RPAREN '\n'            { print_value($3->get_value()); }
-    | INT VAR INIT exp '\n'         {if($4->get_type() == Type::TYPE_INT){
+line_non_empty:
+    exp '\n'                      
+    | DOUBLE VAR '\n'                   {
+        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));
+    }
+    | BOOL VAR '\n'                     {
+        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));
+    } 
+    | STR VAR '\n'                      {
+        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));
+    }
+    | INT VAR '\n'                      {
+        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));
+    }
+    | IF LPAREN exp RPAREN scope'\n'    {
+        std::cout << "hola";
+        /*Value v  =  $3->get_value();
+        std::visit([](auto&& a){
+            using T = std::decay_t<decltype(a)>;
+            if constexpr (std::is_same_v<T, std::string>){
+                if(a == "true"){
+                    $5;
+                }
+            }else if constexpr (std::is_same_v<T, bool>){
+                if(a){
+                    $5;
+                }
+            }else{
+                if(a>0){
+                    $5;
+                }
+            }
+        }, v);*/
+    }        
+    | PRINT LPAREN exp RPAREN '\n'     {
+        //print_value($3->get_value()); 
+        Print_node node($3->get_value());
+        node.execute();
+    }
+    | INT VAR INIT exp '\n'             {
+        if($4->get_type() == Type::TYPE_INT){
+    
+            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>($4->get_value())));
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>($4->get_value())));
+        }else if($4->get_type() == Type::TYPE_DOUBLE){
 
-                                     }else if($4->get_type() == Type::TYPE_DOUBLE){
+            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>( $4->get_value() ))));
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>( $4->get_value() ))));
-
-                                     }else{yyerror("Tipo incompatible con int");}
+        }else{yyerror("Tipo incompatible con int");}
                                     
-                                    }
+    }
 
-    | DOUBLE VAR INIT exp '\n'      {if($4->get_type() == Type::TYPE_INT){
+    | DOUBLE VAR INIT exp '\n'          {
+        if($4->get_type() == Type::TYPE_INT){
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, static_cast<double>(std::get<int>($4->get_value()))));
+            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, static_cast<double>(std::get<int>($4->get_value()))));
 
-                                     }else if($4->get_type() == Type::TYPE_DOUBLE){
+        }else if($4->get_type() == Type::TYPE_DOUBLE){
 
-                                        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>( $4->get_value() )));
+            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>( $4->get_value() )));
 
-                                     }else{yyerror("Tipo incompatible con double");}
+        }else{yyerror("Tipo incompatible con double");}
                                     
-                                    }
+    }
 
     | BOOL VAR INIT exp '\n'        {
-                                    std::string name = $2;
-                                    Symbol_base* val = $4;
+        std::string name = $2;
+        Symbol_base* val = $4;
 
-                                    std::visit([&](auto&& arg) {
-                                            bool bool_val;
-                                            using T = std::decay_t<decltype(arg)>;
+        std::visit([&](auto&& arg) {
+            bool bool_val;
+            using T = std::decay_t<decltype(arg)>;
 
-                                            if constexpr (std::is_same_v<T, std::string>){
-                                                if(arg == "true")
-                                                    bool_val = true;
-                                                else
-                                                    bool_val = false;
-                                            }else if constexpr (std::is_same_v<T, bool>){
-                                                    bool_val = arg;
-                                            }else{
-                                                if (arg > 0)
-                                                    bool_val = true;
-                                                else
-                                                    bool_val = false;
-                                            }
+            if constexpr (std::is_same_v<T, std::string>){
+                if(arg == "true")
+                    bool_val = true;
+                else
+                    bool_val = false;
+            }else if constexpr (std::is_same_v<T, bool>){
+                bool_val = arg;
+            }else{
+                if (arg > 0)
+                    bool_val = true;
+                else
+                    bool_val = false;
+            }
 
-                                            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, bool_val));
+            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, bool_val));
 
-                                    }, val->get_value());
-                                    }
+        }, val->get_value());
+    }
 
     | STR VAR INIT exp '\n'         {
-                                    std::string name = $2;
-                                    Symbol_base* val = $4;
+        std::string name = $2;
+        Symbol_base* val = $4;
 
-                                    std::visit([&](auto&& arg) {
-                                            std::string str_val;
-                                            using T = std::decay_t<decltype(arg)>;
+        std::visit([&](auto&& arg) {
+            std::string str_val;
+            using T = std::decay_t<decltype(arg)>;
 
-                                            if constexpr (std::is_same_v<T, std::string>)
-                                                str_val = arg;
-                                            else if constexpr (std::is_same_v<T, bool>)
-                                                str_val = arg ? "true" : "false";
-                                            else
-                                                str_val = std::to_string(arg);
+            if constexpr (std::is_same_v<T, std::string>)
+                str_val = arg;
+            else if constexpr (std::is_same_v<T, bool>)
+                str_val = arg ? "true" : "false";
+            else
+                str_val = std::to_string(arg);
 
-                                            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
 
-                                    }, val->get_value());
-                                    }
+        }, val->get_value());
+    }
 
     | VAR INIT exp '\n'             {
-                                    std::string name = $1;
-                                    Type t = $3->get_type();
-                                    Value v = $3->get_value();
-                                    Symbol_base* var = table.get(name);
+        std::string name = $1;
+        Type t = $3->get_type();
+        Value v = $3->get_value();
+        Symbol_base* var = table.get(name);
 
-                                    if(var->get_type() == t){
+        if(var->get_type() == t){
 
-                                        table.update(name, std::make_unique<Symbol_base>(t, v));
+            table.update(name, std::make_unique<Symbol_base>(t, v));
 
-                                    }else if(var->get_type() == Type::TYPE_INT and t == Type::TYPE_DOUBLE){
+        }else if(var->get_type() == Type::TYPE_INT and t == Type::TYPE_DOUBLE){
 
-                                        table.update(name, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>(v))));
+            table.update(name, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>(v))));
 
-                                    }else if(var->get_type() == Type::TYPE_DOUBLE and t == Type::TYPE_INT){
+        }else if(var->get_type() == Type::TYPE_DOUBLE and t == Type::TYPE_INT){
 
-                                        table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
+            table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
 
-                                    }else if (var->get_type() == Type::TYPE_STRING) {
+        }else if (var->get_type() == Type::TYPE_STRING) {
 
-                                        Symbol_base* val = $3;
-                                        std::visit([&](auto&& arg) {
-                                            std::string str_val;
-                                            using T = std::decay_t<decltype(arg)>;
-                                            if constexpr (std::is_same_v<T, std::string>)
-                                                str_val = arg;
-                                            else if constexpr (std::is_same_v<T, bool>)
-                                                str_val = arg ? "true" : "false";
-                                            else
-                                                str_val = std::to_string(arg);
-                                            table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
-                                        }, val->get_value());
+            Symbol_base* val = $3;
+            std::visit([&](auto&& arg) {
+                std::string str_val;
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_same_v<T, std::string>)
+                    str_val = arg;
+                else if constexpr (std::is_same_v<T, bool>)
+                    str_val = arg ? "true" : "false";
+                else
+                    str_val = std::to_string(arg);
+                table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+            }, val->get_value());
 
-                                    } else {
-                                        yyerror("tipos incompatibles");
-                                    }
-                                    }
+        } else {
+            yyerror("tipos incompatibles");
+        }
+    }
 
     ;
+line:
+    '\n'
+    | line_non_empty 
+    ;
+    
 
 
 
@@ -324,9 +366,18 @@ exp:
     //| exp INCP              { $$ = ++$1; }
     //| exp POSTINC           { $$ = $1++; }
     ;
+
+scoped_lines:
+    line_non_empty
+    |scoped_lines line_non_empty
+    ;
+scope:
+    '{'scoped_lines'}'
+    ;
+
 %%
 
-void print_value(Value v) {
+/*void print_value(Value v) {
 
     std::string s_val;
 
@@ -342,6 +393,31 @@ void print_value(Value v) {
         std::cout << s_val << std::endl;
         
     }, v);
+}*/
+
+bool eval(Value v){
+
+    bool bool_val;
+    std::visit([&](auto&& arg) {
+        using T = std::decay_t<decltype(arg)>;
+
+        if constexpr (std::is_same_v<T, std::string>){
+            if(arg == "true")
+                bool_val = true;
+            else
+                bool_val = false;
+        }else if constexpr (std::is_same_v<T, bool>){
+            bool_val = arg;
+        }else{
+            if (arg > 0)
+                bool_val = true;
+            else
+                bool_val = false;
+        }
+
+
+    }, v);
+    return bool_val;
 }
 
 int yyerror(const char* s){

@@ -71,8 +71,14 @@ extern int yydebug;
     BOOL = 272,                    /* BOOL  */
     STR = 273,                     /* STR  */
     PRINT = 274,                   /* PRINT  */
-    LPAREN = 275,                  /* LPAREN  */
-    RPAREN = 276                   /* RPAREN  */
+    IF = 275,                      /* IF  */
+    ELIF = 276,                    /* ELIF  */
+    ELSE = 277,                    /* ELSE  */
+    WHILE = 278,                   /* WHILE  */
+    LPAREN = 279,                  /* LPAREN  */
+    RPAREN = 280,                  /* RPAREN  */
+    LBRACE = 281,                  /* LBRACE  */
+    RBRACE = 282                   /* RBRACE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -81,14 +87,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "parser.y"
+#line 14 "parser.y"
 
     Symbol_base* var_;
     double num_;
     bool bool_;
     char* str_;
 
-#line 92 "parser.hpp"
+#line 98 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
