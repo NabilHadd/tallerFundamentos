@@ -5,6 +5,7 @@
 #include "Symbol_table.h"
 #include "utils.h"
 #include "nodes.h"
+
 extern int yylex();
 extern int yylineno;
 Symbol_table table;
@@ -12,6 +13,7 @@ Symbol_table table;
 %}
 
 %union {
+    Logic_op* l_op_;
     Symbol_base* var_;
     double num_;
     bool bool_;
@@ -22,22 +24,16 @@ Symbol_table table;
 %token <str_> VAR
 %token <str_> STRING
 %token <bool_> V_BOOL
-%type <var_> exp
 
-%token ADD SUB MUL DIV POW INCP POSTINC 
+%type <var_> exp
+%type <l_op_> L_op;
+
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
 %token IF ELIF ELSE WHILE
-
-%nonassoc ADD
-%nonassoc SUB
-%nonassoc MUL
-%nonassoc DIV
-%nonassoc POW
-%nonassoc INCP
-%nonassoc POSTINC
-%nonassoc PRINT
-%nonassoc INIT
+//cambio de "token a nonasoc, deberia ser lo mismo"
+%nonassoc ADD SUB MUL DIV POW INCP POSTINC
+%nonassoc EQ GR WR EQ_GR EQ_WR
 %nonassoc LPAREN
 %nonassoc RPAREN
 %nonassoc LBRACE
@@ -211,14 +207,20 @@ exp:
 
         $$ = new Symbol_base(t, v);
     }
+    | exp exp L_op {
+        std::cout<<"en consruccion"<< std::endl;
+    }
     | exp exp ADD           {
-            Type t1 = $1->get_type();
-            Type t2 = $2->get_type();
-            Value v1 = $1->get_value();
-            Value v2 = $2->get_value();
-            Value res;
+        
+        Type t1 = $1->get_type();
+        Type t2 = $2->get_type();
+        Value v1 = $1->get_value();
+        Value v2 = $2->get_value();
+        Add_node node(t1, t2, v1, v2);
+        node.execute();
+        $$ = node.get_Symbol();
 
-       if (t1 == t2) {
+       /*if (t1 == t2) {
             Value res;
             std::visit([&](auto&& a, auto&& b) {
                 using A = std::decay_t<decltype(a)>;
@@ -264,33 +266,16 @@ exp:
 
         }else if(t2 == Type::TYPE_STRING){
             
-        }
+        }*/
     }
     | exp exp SUB           {
-        if ($1->get_type() == Type::TYPE_INT && $2->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            int res = a - b;
-            $$ = new Symbol_base(Type::TYPE_INT, res);
-
-        } else if($1->get_type() == Type::TYPE_DOUBLE && $2->get_type() == Type::TYPE_INT){
-            double a = std::get<double>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            double res = a - b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a - b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a - b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else{
-            yyerror("tipos incompatibles para resta");
-        }
+        Type t1 = $1->get_type();
+        Type t2 = $2->get_type();
+        Value v1 = $1->get_value();
+        Value v2 = $2->get_value();
+        Sub_node node(t1, t2, v1, v2);
+        node.execute();
+        $$ = node.get_Symbol();
     }
     | exp exp MUL           {
             
@@ -315,6 +300,20 @@ exp:
     //| exp exp POW           { $$ = pow($1, $2); }
     //| exp INCP              { $$ = ++$1; }
     //| exp POSTINC           { $$ = $1++; }
+    ;
+
+L_op: EQ {
+        $$ = new Logic_op(Logic::IS_EQ);
+    } 
+    | GR {
+        $$ = new Logic_op(Logic::IS_GR);
+    } | WR {
+        $$ = new Logic_op(Logic::IS_WR);
+    } | EQ_GR {
+        $$ = new Logic_op(Logic::IS_EQ_GR);
+    } | EQ WR {
+        $$ = new Logic_op(Logic::IS_EQ_WR);
+    }
     ;
 
 scoped_lines:

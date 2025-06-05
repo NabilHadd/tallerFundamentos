@@ -27,6 +27,11 @@ extern int yylineno;
 "+"                         { return ADD; }
 "-"                         { return SUB; }
 "*"                         { return MUL; }
+"=="                        { return EQ;}
+">"                         { return GR;}
+"<"                         { return WR;}
+">="                        { return EQ_GR;}
+"<="                        { return EQ_WR;}
 "/"                         { return DIV; }
 [\n]                        { return '\n'; }
 [ \t]+              ;       // ignorar espacios y tabs

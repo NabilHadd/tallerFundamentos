@@ -1,5 +1,6 @@
-double a = 2
 double b = 4.32432
-int c
-c = a b*
-cout(c)
+int a = 1
+double x
+x = a b -
+double z = x
+cout("es double " z +)

@@ -58,27 +58,32 @@ extern int yydebug;
     VAR = 259,                     /* VAR  */
     STRING = 260,                  /* STRING  */
     V_BOOL = 261,                  /* V_BOOL  */
-    ADD = 262,                     /* ADD  */
-    SUB = 263,                     /* SUB  */
-    MUL = 264,                     /* MUL  */
-    DIV = 265,                     /* DIV  */
-    POW = 266,                     /* POW  */
-    INCP = 267,                    /* INCP  */
-    POSTINC = 268,                 /* POSTINC  */
-    INIT = 269,                    /* INIT  */
-    INT = 270,                     /* INT  */
-    DOUBLE = 271,                  /* DOUBLE  */
-    BOOL = 272,                    /* BOOL  */
-    STR = 273,                     /* STR  */
-    PRINT = 274,                   /* PRINT  */
-    IF = 275,                      /* IF  */
-    ELIF = 276,                    /* ELIF  */
-    ELSE = 277,                    /* ELSE  */
-    WHILE = 278,                   /* WHILE  */
-    LPAREN = 279,                  /* LPAREN  */
-    RPAREN = 280,                  /* RPAREN  */
-    LBRACE = 281,                  /* LBRACE  */
-    RBRACE = 282                   /* RBRACE  */
+    INIT = 262,                    /* INIT  */
+    INT = 263,                     /* INT  */
+    DOUBLE = 264,                  /* DOUBLE  */
+    BOOL = 265,                    /* BOOL  */
+    STR = 266,                     /* STR  */
+    PRINT = 267,                   /* PRINT  */
+    IF = 268,                      /* IF  */
+    ELIF = 269,                    /* ELIF  */
+    ELSE = 270,                    /* ELSE  */
+    WHILE = 271,                   /* WHILE  */
+    ADD = 272,                     /* ADD  */
+    SUB = 273,                     /* SUB  */
+    MUL = 274,                     /* MUL  */
+    DIV = 275,                     /* DIV  */
+    POW = 276,                     /* POW  */
+    INCP = 277,                    /* INCP  */
+    POSTINC = 278,                 /* POSTINC  */
+    EQ = 279,                      /* EQ  */
+    GR = 280,                      /* GR  */
+    WR = 281,                      /* WR  */
+    EQ_GR = 282,                   /* EQ_GR  */
+    EQ_WR = 283,                   /* EQ_WR  */
+    LPAREN = 284,                  /* LPAREN  */
+    RPAREN = 285,                  /* RPAREN  */
+    LBRACE = 286,                  /* LBRACE  */
+    RBRACE = 287                   /* RBRACE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -87,14 +92,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 15 "parser.y"
 
+    Logic_op* l_op_;
     Symbol_base* var_;
     double num_;
     bool bool_;
     char* str_;
 
-#line 98 "parser.hpp"
+#line 104 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
