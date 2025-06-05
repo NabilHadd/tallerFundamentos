@@ -1,2 +1,5 @@
-bool a = true
-cout(a)
+double a = 2
+double b = 4.32432
+int c
+c = a b*
+cout(c)

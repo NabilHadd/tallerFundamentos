@@ -68,27 +68,9 @@ line_non_empty:
         table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));
     }
     | IF LPAREN exp RPAREN scope'\n'    {
-        std::cout << "hola";
-        /*Value v  =  $3->get_value();
-        std::visit([](auto&& a){
-            using T = std::decay_t<decltype(a)>;
-            if constexpr (std::is_same_v<T, std::string>){
-                if(a == "true"){
-                    $5;
-                }
-            }else if constexpr (std::is_same_v<T, bool>){
-                if(a){
-                    $5;
-                }
-            }else{
-                if(a>0){
-                    $5;
-                }
-            }
-        }, v);*/
+        std::cout << "en construccion";
     }        
     | PRINT LPAREN exp RPAREN '\n'     {
-        //print_value($3->get_value()); 
         Print_node node($3->get_value());
         node.execute();
     }
@@ -311,56 +293,24 @@ exp:
         }
     }
     | exp exp MUL           {
-        if ($1->get_type() == Type::TYPE_INT && $2->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            int res = a * b;
-            $$ = new Symbol_base(Type::TYPE_INT, res);
-
-        } else if($1->get_type() == Type::TYPE_DOUBLE && $2->get_type() == Type::TYPE_INT){
-            double a = std::get<double>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            double res = a * b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a * b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a * b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else{
-            yyerror("tipos incompatibles para multiplicacion");
-        }
+            
+        Type t1 = $1->get_type();
+        Type t2 = $2->get_type();
+        Value v1 = $1->get_value();
+        Value v2 = $2->get_value();
+        Mul_node node(t1, t2, v1, v2);
+        node.execute();
+        $$ = node.get_Symbol();
     }
-    | exp exp DIV           {
-        if ($1->get_type() == Type::TYPE_INT && $2->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            int res = a / b;
-            $$ = new Symbol_base(Type::TYPE_INT, res);
 
-        } else if($1->get_type() == Type::TYPE_DOUBLE && $2->get_type() == Type::TYPE_INT){
-            double a = std::get<double>($1->get_value());
-            int b = std::get<int>($2->get_value());
-            double res = a / b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($2->get_type() == Type::TYPE_DOUBLE && $1->get_type() == Type::TYPE_INT){
-            int a = std::get<int>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a / b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if($1->get_type()==Type::TYPE_DOUBLE && $2->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>($1->get_value());
-            double b = std::get<double>($2->get_value());
-            double res = a / b;
-            $$ = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else{
-            yyerror("tipos incompatibles para division");        
-        }
+    | exp exp DIV           {
+        Type t1 = $1->get_type();
+        Type t2 = $2->get_type();
+        Value v1 = $1->get_value();
+        Value v2 = $2->get_value();
+        Div_node node(t1, t2, v1, v2);
+        node.execute();
+        $$ = node.get_Symbol();
     }
     //| exp exp POW           { $$ = pow($1, $2); }
     //| exp INCP              { $$ = ++$1; }
@@ -376,24 +326,6 @@ scope:
     ;
 
 %%
-
-/*void print_value(Value v) {
-
-    std::string s_val;
-
-    std::visit([&](auto&& arg){
-        using T = std::decay_t<decltype(arg)>;
-        if constexpr (std::is_same_v<T, std::string>){
-            s_val = arg;
-        }else if constexpr (std::is_same_v<T, bool>){
-            s_val = (arg ? "true" : "false");
-        }else{
-            s_val = std::to_string(arg);
-        }
-        std::cout << s_val << std::endl;
-        
-    }, v);
-}*/
 
 bool eval(Value v){
 

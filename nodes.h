@@ -36,10 +36,40 @@ public:
 };
 
 class Print_node : public Statment_node{
-public:
+private:
     Value v;
-    
+public: 
     Print_node(Value v);
     
     void execute() override;
 };
+
+
+//aritmetica:
+
+class Mul_node : public Statment_node{
+private:
+    Type t1;
+    Type t2;
+    Value v1;
+    Value v2;
+    Symbol_base* aux;
+public:
+    Mul_node(Type t1, Type t2, Value v1, Value v2);
+    Symbol_base* get_Symbol();
+    void execute() override;
+};
+
+class Div_node : public Statment_node{
+private:
+    Type t1;
+    Type t2;
+    Value v1;
+    Value v2;
+    Symbol_base* aux;
+public:
+    Div_node(Type t1, Type t2, Value v1, Value v2);
+    Symbol_base* get_Symbol();
+    void execute() override;
+};
+

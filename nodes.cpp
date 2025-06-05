@@ -42,5 +42,88 @@ void Print_node::execute() {
         }
         std::cout << s_val << std::endl;
         
-    }, v);
+    }, this->v);
 }
+
+
+Mul_node::Mul_node(Type t1, Type t2, Value v1, Value v2){
+    this->t1 = t1;
+    this->t2 = t2;
+    this->v1 = v1;
+    this->v2 = v2;
+}
+
+Symbol_base* Mul_node::get_Symbol(){return this->aux;}
+
+void Mul_node::execute(){
+    if (this->t1 == Type::TYPE_INT && this->t2 == Type::TYPE_INT){
+        int a = std::get<int>(this->v1);
+        int b = std::get<int>(this->v2);
+        int res = a * b;
+        this->aux = new Symbol_base(this->t1, res);
+
+    } else if(this->t1 == Type::TYPE_DOUBLE && this->t2 == Type::TYPE_INT){
+        double a = std::get<double>(this->v1);
+        int b = std::get<int>(this->v2);
+        double res = a * b;
+        this->aux = new Symbol_base(this->t1, res);
+
+    }else if(this->t2 == Type::TYPE_DOUBLE && this->t1 == Type::TYPE_INT){
+        int a = std::get<int>(this->v1);
+        double b = std::get<double>(this->v2);
+        double res = a * b;
+        this->aux = new Symbol_base(this->t2, res);
+
+    }else if(this->t1 == Type::TYPE_DOUBLE && this->t2 == Type::TYPE_DOUBLE){
+        double a = std::get<double>(this->v1);
+        double b = std::get<double>(this->v2);
+        double res = a * b;
+        this->aux = new Symbol_base(this->t1, res);
+    }else{
+        yyerror("tipos incompatibles para multiplicacion");
+    }
+
+}
+
+
+
+Div_node::Div_node(Type t1, Type t2, Value v1, Value v2){
+    this->t1 = t1;
+    this->t2 = t2;
+    this->v1 = v1;
+    this->v2 = v2;
+}
+
+Symbol_base* Div_node::get_Symbol(){return this->aux;}
+
+void Div_node::execute(){
+    if (this->t1 == Type::TYPE_INT && this->t2 == Type::TYPE_INT){
+        int a = std::get<int>(this->v1);
+        int b = std::get<int>(this->v2);
+        int res = a / b;
+        this->aux = new Symbol_base(this->t1, res);
+
+    } else if(this->t1 == Type::TYPE_DOUBLE && this->t2 == Type::TYPE_INT){
+        double a = std::get<double>(this->v1);
+        int b = std::get<int>(this->v2);
+        double res = a / b;
+        this->aux = new Symbol_base(this->t1, res);
+
+    }else if(this->t2 == Type::TYPE_DOUBLE && this->t1 == Type::TYPE_INT){
+        int a = std::get<int>(this->v1);
+        double b = std::get<double>(this->v2);
+        double res = a / b;
+        this->aux = new Symbol_base(this->t2, res);
+
+    }else if(this->t1 == Type::TYPE_DOUBLE && this->t2 == Type::TYPE_DOUBLE){
+        double a = std::get<double>(this->v1);
+        double b = std::get<double>(this->v2);
+        double res = a / b;
+        this->aux = new Symbol_base(this->t1, res);
+    }else{
+        yyerror("tipos incompatibles para multiplicacion");
+    }
+
+}
+
+

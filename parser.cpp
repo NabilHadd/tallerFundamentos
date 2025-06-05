@@ -536,7 +536,7 @@ static const yytype_int16 yyrline[] =
 {
        0,    52,    52,    53,    57,    58,    61,    64,    67,    70,
       90,    95,   108,   121,   148,   168,   208,   209,   216,   219,
-     222,   225,   232,   287,   313,   339,   371,   372,   375
+     222,   225,   232,   287,   313,   324,   339,   340,   343
 };
 #endif
 
@@ -1199,7 +1199,7 @@ yyreduce:
   case 10: /* line_non_empty: PRINT LPAREN exp RPAREN '\n'  */
 #line 90 "parser.y"
                                        {
-        //print_value($3->get_value()); 
+        std::cout << std::get<int>((yyvsp[-2].var_)->get_value()) << std::endl;
         Print_node node((yyvsp[-2].var_)->get_value());
         node.execute();
     }
@@ -1467,67 +1467,34 @@ yyreduce:
   case 24: /* exp: exp exp MUL  */
 #line 313 "parser.y"
                             {
-        if ((yyvsp[-2].var_)->get_type() == Type::TYPE_INT && (yyvsp[-1].var_)->get_type() == Type::TYPE_INT){
-            int a = std::get<int>((yyvsp[-2].var_)->get_value());
-            int b = std::get<int>((yyvsp[-1].var_)->get_value());
-            int res = a * b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_INT, res);
-
-        } else if((yyvsp[-2].var_)->get_type() == Type::TYPE_DOUBLE && (yyvsp[-1].var_)->get_type() == Type::TYPE_INT){
-            double a = std::get<double>((yyvsp[-2].var_)->get_value());
-            int b = std::get<int>((yyvsp[-1].var_)->get_value());
-            double res = a * b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if((yyvsp[-1].var_)->get_type() == Type::TYPE_DOUBLE && (yyvsp[-2].var_)->get_type() == Type::TYPE_INT){
-            int a = std::get<int>((yyvsp[-2].var_)->get_value());
-            double b = std::get<double>((yyvsp[-1].var_)->get_value());
-            double res = a * b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if((yyvsp[-2].var_)->get_type()==Type::TYPE_DOUBLE && (yyvsp[-1].var_)->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>((yyvsp[-2].var_)->get_value());
-            double b = std::get<double>((yyvsp[-1].var_)->get_value());
-            double res = a * b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else{
-            yyerror("tipos incompatibles para multiplicacion");
-        }
+            
+        Type t1 = (yyvsp[-2].var_)->get_type();
+        Type t2 = (yyvsp[-1].var_)->get_type();
+        Value v1 = (yyvsp[-2].var_)->get_value();
+        Value v2 = (yyvsp[-1].var_)->get_value();
+        Mul_node node(t1, t2, v1, v2);
+        node.execute();
+        (yyval.var_) = node.get_Symbol();
     }
-#line 1496 "parser.cpp"
+#line 1480 "parser.cpp"
     break;
 
   case 25: /* exp: exp exp DIV  */
-#line 339 "parser.y"
+#line 324 "parser.y"
                             {
-        if ((yyvsp[-2].var_)->get_type() == Type::TYPE_INT && (yyvsp[-1].var_)->get_type() == Type::TYPE_INT){
-            int a = std::get<int>((yyvsp[-2].var_)->get_value());
-            int b = std::get<int>((yyvsp[-1].var_)->get_value());
-            int res = a / b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_INT, res);
-
-        } else if((yyvsp[-2].var_)->get_type() == Type::TYPE_DOUBLE && (yyvsp[-1].var_)->get_type() == Type::TYPE_INT){
-            double a = std::get<double>((yyvsp[-2].var_)->get_value());
-            int b = std::get<int>((yyvsp[-1].var_)->get_value());
-            double res = a / b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if((yyvsp[-1].var_)->get_type() == Type::TYPE_DOUBLE && (yyvsp[-2].var_)->get_type() == Type::TYPE_INT){
-            int a = std::get<int>((yyvsp[-2].var_)->get_value());
-            double b = std::get<double>((yyvsp[-1].var_)->get_value());
-            double res = a / b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else if((yyvsp[-2].var_)->get_type()==Type::TYPE_DOUBLE && (yyvsp[-1].var_)->get_type()==Type::TYPE_DOUBLE){
-            double a = std::get<double>((yyvsp[-2].var_)->get_value());
-            double b = std::get<double>((yyvsp[-1].var_)->get_value());
-            double res = a / b;
-            (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, res);
-        }else{
-            yyerror("tipos incompatibles para division");        
-        }
+        Type t1 = (yyvsp[-2].var_)->get_type();
+        Type t2 = (yyvsp[-1].var_)->get_type();
+        Value v1 = (yyvsp[-2].var_)->get_value();
+        Value v2 = (yyvsp[-1].var_)->get_value();
+        Div_node node(t1, t2, v1, v2);
+        node.execute();
+        (yyval.var_) = node.get_Symbol();
     }
-#line 1527 "parser.cpp"
+#line 1494 "parser.cpp"
     break;
 
 
-#line 1531 "parser.cpp"
+#line 1498 "parser.cpp"
 
       default: break;
     }
@@ -1720,26 +1687,8 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 378 "parser.y"
+#line 346 "parser.y"
 
-
-/*void print_value(Value v) {
-
-    std::string s_val;
-
-    std::visit([&](auto&& arg){
-        using T = std::decay_t<decltype(arg)>;
-        if constexpr (std::is_same_v<T, std::string>){
-            s_val = arg;
-        }else if constexpr (std::is_same_v<T, bool>){
-            s_val = (arg ? "true" : "false");
-        }else{
-            s_val = std::to_string(arg);
-        }
-        std::cout << s_val << std::endl;
-        
-    }, v);
-}*/
 
 bool eval(Value v){
 
