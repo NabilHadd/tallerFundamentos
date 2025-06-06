@@ -6,29 +6,37 @@
 #include "utils.h"
 #include "nodes.h"
 
-extern int yylex();
-extern int yylineno;
-Symbol_table table;
+extern int          yylex();
+extern int          yylineno;
+Symbol_table        table;
 
 %}
 
 %union {
-    Type_id* type_;
-    Logic_op* l_op_;
-    Symbol_base* var_;
-    double num_;
-    bool bool_;
-    char* str_;
+    Statment_node*  stmt_;
+    Body_node*      body_;
+
+    Type_id*        type_;
+    Logic_op*       l_op_;
+
+    Symbol_base*    var_;
+
+    double          num_;
+    bool            bool_;
+    char*           str_;
 }
 
-%token <num_> NUM
-%token <str_> VAR
-%token <str_> STRING
-%token <bool_> V_BOOL
+%token  <num_>      NUM
+%token  <str_>      VAR
+%token  <str_>      STRING
+%token  <bool_>     V_BOOL
 
-%type <var_> exp
-%type <l_op_> L_op;
-%type <type_> type_id;
+%type   <var_>      exp
+%type   <l_op_>     L_op
+%type   <type_>     type_id
+%type   <stmt_>     line_non_empty
+%type   <body_>     scope scoped_lines
+
 
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
@@ -52,33 +60,32 @@ input:
     ;
 
 line_non_empty:
-    exp '\n'
-    | type_id VAR '\n'      {
-        Dec_node node($1->get_id(), $2, &table);
-        node.execute();
+    type_id VAR '\n'                  {
+        $$ = new Dec_node($1->get_id(), $2, &table);
         
     }
-    | type_id VAR INIT exp  {
-        Dec_ins_node node($1->get_id(), $2, $4, &table);
-        node.execute();
+    | type_id VAR INIT exp '\n'         {
+        $$ = new Dec_ins_node($1->get_id(), $2, $4, &table);
+        
     }
-    | VAR INIT exp          {
-        Ins_node node($1, $3, &table);
-        node.execute();
+    | VAR INIT exp '\n'                 {
+        $$ = new Ins_node($1, $3, &table);
+
     }
     | IF LPAREN exp RPAREN scope'\n'    {
-        std::cout << "en construccion";
+        $$ = new If_node($3, $5);
+
     }     
-    | PRINT LPAREN exp RPAREN '\n'     {
-        Print_node node($3->get_value());
-        node.execute();
+    | PRINT LPAREN exp RPAREN '\n'      {
+        $$ = new Print_node($3->get_value());
+
     }
     ;
 
 
 line:
     '\n'
-    | line_non_empty 
+    | line_non_empty {$1->execute(); delete $1;}
     ;
     
 
@@ -178,11 +185,17 @@ type_id:
     ;
 
 scoped_lines:
-    line_non_empty
-    |scoped_lines line_non_empty
+    line_non_empty          {
+        $$ = new Body_node();
+        $$->add_statment(std::unique_ptr<Statment_node>($1));
+    }
+    |scoped_lines line_non_empty {
+        $1->add_statment(std::unique_ptr<Statment_node>($2));
+        $$ = $1;
+    }
     ;
 scope:
-    '{'scoped_lines'}'
+    LBRACE scoped_lines RBRACE {$$ = $2;}
     ;
 
 %%

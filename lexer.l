@@ -14,13 +14,16 @@ extern int yylineno;
                               return NUM; }
 (true|false)                {  yylval.bool_ = strdup(yytext);
                               return V_BOOL;}
+"if"                        { return IF;}
 "int"                       { return INT;}
 "bool"                      { return BOOL;}
-"double"                    {return DOUBLE;}
-"string"                    {return STR;}
-"cout"                      {return PRINT;}
-"("                         {return LPAREN;}
-")"                         {return RPAREN;}
+"double"                    { return DOUBLE;}
+"string"                    { return STR;}
+"cout"                      { return PRINT;}
+"("                         { return LPAREN;}
+")"                         { return RPAREN;}
+"{"                         { return LBRACE;}
+"}"                         { return RBRACE;}
 "="                         { return INIT;}
 "**"                        { return POW; }
 "+="                        { return INCP; }

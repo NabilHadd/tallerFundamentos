@@ -186,10 +186,8 @@ If_node::If_node(Symbol_base* cond, Body_node* body_node){
 }
 
 void If_node::execute(){
-    if (eval(cond->get_value())){
-        //hacer que ejecute cada linea de body y almacene la info en una table.
-        //haciendo uso de body->execute(); dentro de un for algo asi.  
-        //hay que pensar bien lo de la memoria para que se elimine apenas salga de cad scope.
+    if (/*eval(cond->get_value())*/ false){
+        this->body_node->execute();
     }else{
         return;//si eval no cumple que no haga nada.
     }
