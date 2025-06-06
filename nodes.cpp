@@ -172,9 +172,21 @@ Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&&
 //--------------------------------------------------------------------
 
 
+//Nodo para cuerpo de un scope----------------------------------------
+void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
+    body.push_back(std::move(stmt));
+}
+
+void Body_node::execute(){
+    for (auto&& stmt : body)
+        stmt->execute();
+}
+//--------------------------------------------------------------------
+
+
 
 //Nodo para if-------------------------------------------------------------------------------
-If_node::If_node(Symbol_base* cond, Body_node* body_node)
+If_node::If_node(Symbol_base* cond, std::vector<std::unique_ptr<Statment_node>>&& body)
 : cond(cond), body(std::move(body)){}
 
 void If_node::execute(){

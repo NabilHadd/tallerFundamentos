@@ -47,6 +47,16 @@ class Statment_node : public Node { //nodo statment, almacena una instruccion
 
 
 
+class Body_node : public Statment_node {
+std::vector<std::unique_ptr<Statment_node>> body;
+
+public:
+    void add_statment(std::unique_ptr<Statment_node> stmt);
+    void execute() override;
+
+};
+
+
 class Body_holder_node {
 public:
     std::vector<std::unique_ptr<Statment_node>> body;
@@ -63,7 +73,7 @@ class If_node : public Statment_node{
     std::vector<std::unique_ptr<Statment_node>> body;
 
 public:
-    If_node(Symbol_base* cond, std::vector<std::unique_ptr<Statment_node>> body);//constructor
+    If_node(Symbol_base* cond, std::vector<std::unique_ptr<Statment_node>>&& body);//constructor
         
     void execute() override;//en este caso execute, siempre que se cumpla la cond deberia llamar al execute de body, recorriendo cada instruccion
 };

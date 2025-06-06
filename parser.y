@@ -14,10 +14,14 @@ std::set<Statment_node*> global_body_cache;
 
 %}
 
+
+%parse-param { Body_node* program }
+
 %union {
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
     Body_holder_node*      body_holder_;
+    Body_node*  body_;       
 
     Type_id*        type_;
     Logic_op*       l_op_;
@@ -42,6 +46,7 @@ std::set<Statment_node*> global_body_cache;
 %type   <stmts_>    scoped_lines
 
 
+
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
 %token IF ELIF ELSE WHILE
@@ -60,7 +65,10 @@ std::set<Statment_node*> global_body_cache;
 
 
 input: 
-    | input line
+    /*vacio*/
+    | input line_non_empty {
+        program -> add_statment(std::unique_ptr<Statment_node>($2));
+    }
     ;
 
 line_non_empty:
@@ -89,15 +97,12 @@ line_non_empty:
     ;
 
 
-line:
+/*line:
     '\n'
     | line_non_empty {
-        if(!global_body_cache.contains($1)){
-            $1->execute();        
-        }
-        delete $1;
+        $1->execute();        
     }
-    ;
+    ;*/
     
 
 
@@ -199,11 +204,9 @@ scoped_lines:
     line_non_empty          {
         $$ = new std::vector<Statment_node*>();
         $$->push_back($1);
-        global_body_cache.insert($1);
     }
     |scoped_lines line_non_empty {
         $1->push_back($2);
-        global_body_cache.insert($2);
         $$ = $1;
     }
     ;
@@ -213,7 +216,7 @@ scope:
         for (auto stmt : *$2)
             body.push_back(std::unique_ptr<Statment_node>(stmt));
         delete $2;
-        $$ = Body_holder_node(std::move(body));    
+        $$ = new Body_holder_node(std::move(body));    
         }
     ;
 
@@ -252,7 +255,9 @@ int yyerror(const char* s){
 
 
 int main(void) {
-    yyparse();
+    Body_node program;
+    yyparse(&program);
+    program.execute();
     table.clean_table();
     return 0;
 }
