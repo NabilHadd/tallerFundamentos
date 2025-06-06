@@ -8,7 +8,7 @@
 
 extern int yylex();
 extern int yylineno;
-Symbol_table* table;
+Symbol_table table;
 
 %}
 
@@ -54,150 +54,28 @@ input:
 line_non_empty:
     exp '\n'
     | type_id VAR '\n'      {
-        Dec_node node($1->get_id(), $2, table);
+        Dec_node node($1->get_id(), $2, &table);
         node.execute();
         
     }
     | type_id VAR INIT exp  {
-        Dec_ins_node node($1->get_id(), $2, $4, table);
+        Dec_ins_node node($1->get_id(), $2, $4, &table);
         node.execute();
     }
     | VAR INIT exp          {
-        Ins_node node($1->get_id(), $3, table);
+        Ins_node node($1, $3, &table);
         node.execute();
-    }
-                      
-    /*| DOUBLE VAR '\n'                   {
-        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));
-    }
-    | BOOL VAR '\n'                     {
-        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_BOOL, true));
-    } 
-    | STR VAR '\n'                      {
-        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_STRING, ""));
-    }
-    | INT VAR '\n'                      {
-        table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, 0));
     }
     | IF LPAREN exp RPAREN scope'\n'    {
         std::cout << "en construccion";
-    } */       
+    }     
     | PRINT LPAREN exp RPAREN '\n'     {
         Print_node node($3->get_value());
         node.execute();
     }
-    /*| INT VAR INIT exp '\n'             {
-        if($4->get_type() == Type::TYPE_INT){
-    
-            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>($4->get_value())));
-
-        }else if($4->get_type() == Type::TYPE_DOUBLE){
-
-            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>( $4->get_value() ))));
-
-        }else{yyerror("Tipo incompatible con int");}
-                                    
-    }*/
-
-    /*| DOUBLE VAR INIT exp '\n'          {
-        if($4->get_type() == Type::TYPE_INT){
-
-            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, static_cast<double>(std::get<int>($4->get_value()))));
-
-        }else if($4->get_type() == Type::TYPE_DOUBLE){
-
-            table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, std::get<double>( $4->get_value() )));
-
-        }else{yyerror("Tipo incompatible con double");}
-                                    
-    }*/
-
-    /*| BOOL VAR INIT exp '\n'        {
-        std::string name = $2;
-        Symbol_base* val = $4;
-
-        std::visit([&](auto&& arg) {
-            bool bool_val;
-            using T = std::decay_t<decltype(arg)>;
-
-            if constexpr (std::is_same_v<T, std::string>){
-                if(arg == "true")
-                    bool_val = true;
-                else
-                    bool_val = false;
-            }else if constexpr (std::is_same_v<T, bool>){
-                bool_val = arg;
-            }else{
-                if (arg > 0)
-                    bool_val = true;
-                else
-                    bool_val = false;
-            }
-
-            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, bool_val));
-
-        }, val->get_value());
-    }*/
-
-    /*| STR VAR INIT exp '\n'         {
-        std::string name = $2;
-        Symbol_base* val = $4;
-
-        std::visit([&](auto&& arg) {
-            std::string str_val;
-            using T = std::decay_t<decltype(arg)>;
-
-            if constexpr (std::is_same_v<T, std::string>)
-                str_val = arg;
-            else if constexpr (std::is_same_v<T, bool>)
-                str_val = arg ? "true" : "false";
-            else
-                str_val = std::to_string(arg);
-
-            table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
-
-        }, val->get_value());
-    }*/
-
-    /*| VAR INIT exp '\n'             {
-        std::string name = $1;
-        Type t = $3->get_type();
-        Value v = $3->get_value();
-        Symbol_base* var = table.get(name);
-
-        if(var->get_type() == t){
-
-            table.update(name, std::make_unique<Symbol_base>(t, v));
-
-        }else if(var->get_type() == Type::TYPE_INT and t == Type::TYPE_DOUBLE){
-
-            table.update(name, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>(v))));
-
-        }else if(var->get_type() == Type::TYPE_DOUBLE and t == Type::TYPE_INT){
-
-            table.update(name, std::make_unique<Symbol_base>(t, static_cast<double>(std::get<int>(v))));
-
-        }else if (var->get_type() == Type::TYPE_STRING) {
-
-            Symbol_base* val = $3;
-            std::visit([&](auto&& arg) {
-                std::string str_val;
-                using T = std::decay_t<decltype(arg)>;
-                if constexpr (std::is_same_v<T, std::string>)
-                    str_val = arg;
-                else if constexpr (std::is_same_v<T, bool>)
-                    str_val = arg ? "true" : "false";
-                else
-                    str_val = std::to_string(arg);
-                table.update(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
-            }, val->get_value());
-
-        } else {
-            yyerror("tipos incompatibles");
-        }
-    }*/
-
     ;
+
+
 line:
     '\n'
     | line_non_empty 
@@ -217,7 +95,7 @@ exp:
         $$ = new Symbol_base(Type::TYPE_STRING, $1);
     }
     | VAR                   { 
-        Symbol_base* aux = table->get($1);
+        Symbol_base* aux = table.get($1);
         Value v = aux->get_value();
         Type t = aux->get_type();
 
@@ -299,7 +177,6 @@ type_id:
     }
     ;
 
-
 scoped_lines:
     line_non_empty
     |scoped_lines line_non_empty
@@ -344,7 +221,7 @@ int yyerror(const char* s){
 
 int main(void) {
     yyparse();
-    table->clean_table();
+    table.clean_table();
     return 0;
 }
 
