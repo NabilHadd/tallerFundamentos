@@ -10,12 +10,11 @@
 extern int          yylex();
 extern int          yylineno;
 Symbol_table        table;
+Body_node           program;
 std::set<Statment_node*> global_body_cache;
 
 %}
 
-
-%parse-param { Body_node* program }
 
 %union {
     std::vector<Statment_node*>* stmts_;
@@ -67,7 +66,7 @@ std::set<Statment_node*> global_body_cache;
 input: 
     /*vacio*/
     | input line_non_empty {
-        program -> add_statment(std::unique_ptr<Statment_node>($2));
+        program.add_statment(std::unique_ptr<Statment_node>($2));
     }
     ;
 
@@ -255,8 +254,7 @@ int yyerror(const char* s){
 
 
 int main(void) {
-    Body_node program;
-    yyparse(&program);
+    yyparse();
     program.execute();
     table.clean_table();
     return 0;

@@ -92,7 +92,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 20 "parser.y"
+#line 19 "parser.y"
 
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
@@ -120,7 +120,7 @@ typedef union YYSTYPE YYSTYPE;
 extern YYSTYPE yylval;
 
 
-int yyparse (Body_node* program);
+int yyparse (void);
 
 
 #endif /* !YY_YY_PARSER_HPP_INCLUDED  */
