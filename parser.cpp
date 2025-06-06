@@ -72,6 +72,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include <set>
 #include "Symbol_table.h"
 #include "utils.h"
 #include "nodes.h"
@@ -79,9 +80,10 @@
 extern int          yylex();
 extern int          yylineno;
 Symbol_table        table;
+std::set<Statment_node*> global_body_cache;
 
 
-#line 85 "parser.cpp"
+#line 87 "parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -540,10 +542,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    58,    58,    59,    63,    67,    71,    75,    79,    87,
-      88,    95,    98,   101,   104,   111,   116,   126,   135,   146,
-     161,   164,   166,   168,   170,   176,   178,   180,   182,   188,
-     192,   198
+       0,    62,    62,    63,    67,    71,    75,    79,    85,    93,
+      94,   106,   109,   112,   115,   122,   127,   137,   146,   157,
+     172,   175,   177,   179,   181,   187,   189,   191,   193,   199,
+     204,   211
 };
 #endif
 
@@ -1141,82 +1143,89 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* line_non_empty: type_id VAR '\n'  */
-#line 63 "parser.y"
+#line 67 "parser.y"
                                       {
         (yyval.stmt_) = new Dec_node((yyvsp[-2].type_)->get_id(), (yyvsp[-1].str_), &table);
         
     }
-#line 1150 "parser.cpp"
+#line 1152 "parser.cpp"
     break;
 
   case 5: /* line_non_empty: type_id VAR INIT exp '\n'  */
-#line 67 "parser.y"
+#line 71 "parser.y"
                                         {
         (yyval.stmt_) = new Dec_ins_node((yyvsp[-4].type_)->get_id(), (yyvsp[-3].str_), (yyvsp[-1].var_), &table);
         
     }
-#line 1159 "parser.cpp"
+#line 1161 "parser.cpp"
     break;
 
   case 6: /* line_non_empty: VAR INIT exp '\n'  */
-#line 71 "parser.y"
+#line 75 "parser.y"
                                         {
         (yyval.stmt_) = new Ins_node((yyvsp[-3].str_), (yyvsp[-1].var_), &table);
 
     }
-#line 1168 "parser.cpp"
+#line 1170 "parser.cpp"
     break;
 
   case 7: /* line_non_empty: IF LPAREN exp RPAREN scope '\n'  */
-#line 75 "parser.y"
+#line 79 "parser.y"
                                         {
-        (yyval.stmt_) = new If_node((yyvsp[-3].var_), (yyvsp[-1].body_));
+        auto body_holder = dynamic_cast<Body_holder_node*>((yyvsp[-1].body_holder_));
+        (yyval.stmt_) = new If_node((yyvsp[-3].var_), std::move(body_holder->body));
+        delete body_holder;//es necesario???
 
     }
-#line 1177 "parser.cpp"
+#line 1181 "parser.cpp"
     break;
 
   case 8: /* line_non_empty: PRINT LPAREN exp RPAREN '\n'  */
-#line 79 "parser.y"
+#line 85 "parser.y"
                                         {
         (yyval.stmt_) = new Print_node((yyvsp[-2].var_)->get_value());
 
     }
-#line 1186 "parser.cpp"
+#line 1190 "parser.cpp"
     break;
 
   case 10: /* line: line_non_empty  */
-#line 88 "parser.y"
-                     {(yyvsp[0].stmt_)->execute(); delete (yyvsp[0].stmt_);}
-#line 1192 "parser.cpp"
+#line 94 "parser.y"
+                     {
+        if(!global_body_cache.contains((yyvsp[0].stmt_))){
+            (yyvsp[0].stmt_)->execute();        
+        }
+        delete (yyvsp[0].stmt_);
+    }
+#line 1201 "parser.cpp"
     break;
 
   case 11: /* exp: NUM  */
-#line 95 "parser.y"
+#line 106 "parser.y"
                             { 
         (yyval.var_) = new Symbol_base(Type::TYPE_DOUBLE, (yyvsp[0].num_));                
     }
-#line 1200 "parser.cpp"
+#line 1209 "parser.cpp"
     break;
 
   case 12: /* exp: V_BOOL  */
-#line 98 "parser.y"
+#line 109 "parser.y"
                             {
         (yyval.var_) = new Symbol_base(Type::TYPE_BOOL, (yyvsp[0].bool_));    
     }
-#line 1208 "parser.cpp"
+#line 1217 "parser.cpp"
     break;
 
   case 13: /* exp: STRING  */
-#line 101 "parser.y"
+#line 112 "parser.y"
                             {
         (yyval.var_) = new Symbol_base(Type::TYPE_STRING, (yyvsp[0].str_));
     }
-#line 1216 "parser.cpp"
+#line 1225 "parser.cpp"
     break;
 
   case 14: /* exp: VAR  */
-#line 104 "parser.y"
+#line 115 "parser.y"
                             { 
         Symbol_base* aux = table.get((yyvsp[0].str_));
         Value v = aux->get_value();
@@ -1224,21 +1233,21 @@ yyreduce:
 
         (yyval.var_) = new Symbol_base(t, v);
     }
-#line 1228 "parser.cpp"
+#line 1237 "parser.cpp"
     break;
 
   case 15: /* exp: exp exp L_op  */
-#line 111 "parser.y"
+#line 122 "parser.y"
                    {
         Logic_node node((yyvsp[-2].var_), (yyvsp[-1].var_), (yyvsp[0].l_op_));
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1238 "parser.cpp"
+#line 1247 "parser.cpp"
     break;
 
   case 16: /* exp: exp exp ADD  */
-#line 116 "parser.y"
+#line 127 "parser.y"
                             {
         
         Type t1 = (yyvsp[-2].var_)->get_type();
@@ -1249,11 +1258,11 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1253 "parser.cpp"
+#line 1262 "parser.cpp"
     break;
 
   case 17: /* exp: exp exp SUB  */
-#line 126 "parser.y"
+#line 137 "parser.y"
                             {
         Type t1 = (yyvsp[-2].var_)->get_type();
         Type t2 = (yyvsp[-1].var_)->get_type();
@@ -1263,11 +1272,11 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1267 "parser.cpp"
+#line 1276 "parser.cpp"
     break;
 
   case 18: /* exp: exp exp MUL  */
-#line 135 "parser.y"
+#line 146 "parser.y"
                             {
             
         Type t1 = (yyvsp[-2].var_)->get_type();
@@ -1278,11 +1287,11 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1282 "parser.cpp"
+#line 1291 "parser.cpp"
     break;
 
   case 19: /* exp: exp exp DIV  */
-#line 146 "parser.y"
+#line 157 "parser.y"
                             {
         Type t1 = (yyvsp[-2].var_)->get_type();
         Type t2 = (yyvsp[-1].var_)->get_type();
@@ -1292,107 +1301,115 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1296 "parser.cpp"
+#line 1305 "parser.cpp"
     break;
 
   case 20: /* L_op: EQ  */
-#line 161 "parser.y"
+#line 172 "parser.y"
        {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ);
     }
-#line 1304 "parser.cpp"
+#line 1313 "parser.cpp"
     break;
 
   case 21: /* L_op: GR  */
-#line 164 "parser.y"
+#line 175 "parser.y"
          {
         (yyval.l_op_) = new Logic_op(Logic::IS_GR);
     }
-#line 1312 "parser.cpp"
+#line 1321 "parser.cpp"
     break;
 
   case 22: /* L_op: WR  */
-#line 166 "parser.y"
+#line 177 "parser.y"
            {
         (yyval.l_op_) = new Logic_op(Logic::IS_WR);
     }
-#line 1320 "parser.cpp"
+#line 1329 "parser.cpp"
     break;
 
   case 23: /* L_op: EQ_GR  */
-#line 168 "parser.y"
+#line 179 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_GR);
     }
-#line 1328 "parser.cpp"
+#line 1337 "parser.cpp"
     break;
 
   case 24: /* L_op: EQ_WR  */
-#line 170 "parser.y"
+#line 181 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_WR);
     }
-#line 1336 "parser.cpp"
+#line 1345 "parser.cpp"
     break;
 
   case 25: /* type_id: INT  */
-#line 176 "parser.y"
+#line 187 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_INT);
     }
-#line 1344 "parser.cpp"
+#line 1353 "parser.cpp"
     break;
 
   case 26: /* type_id: DOUBLE  */
-#line 178 "parser.y"
+#line 189 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_DOUBLE);
     }
-#line 1352 "parser.cpp"
+#line 1361 "parser.cpp"
     break;
 
   case 27: /* type_id: BOOL  */
-#line 180 "parser.y"
+#line 191 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_BOOL);
     }
-#line 1360 "parser.cpp"
+#line 1369 "parser.cpp"
     break;
 
   case 28: /* type_id: STR  */
-#line 182 "parser.y"
+#line 193 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_STRING);
-    }
-#line 1368 "parser.cpp"
-    break;
-
-  case 29: /* scoped_lines: line_non_empty  */
-#line 188 "parser.y"
-                            {
-        (yyval.body_) = new Body_node();
-        (yyval.body_)->add_statment(std::unique_ptr<Statment_node>((yyvsp[0].stmt_)));
     }
 #line 1377 "parser.cpp"
     break;
 
-  case 30: /* scoped_lines: scoped_lines line_non_empty  */
-#line 192 "parser.y"
-                                 {
-        (yyvsp[-1].body_)->add_statment(std::unique_ptr<Statment_node>((yyvsp[0].stmt_)));
-        (yyval.body_) = (yyvsp[-1].body_);
+  case 29: /* scoped_lines: line_non_empty  */
+#line 199 "parser.y"
+                            {
+        (yyval.stmts_) = new std::vector<Statment_node*>();
+        (yyval.stmts_)->push_back((yyvsp[0].stmt_));
+        global_body_cache.insert((yyvsp[0].stmt_));
     }
-#line 1386 "parser.cpp"
+#line 1387 "parser.cpp"
+    break;
+
+  case 30: /* scoped_lines: scoped_lines line_non_empty  */
+#line 204 "parser.y"
+                                 {
+        (yyvsp[-1].stmts_)->push_back((yyvsp[0].stmt_));
+        global_body_cache.insert((yyvsp[0].stmt_));
+        (yyval.stmts_) = (yyvsp[-1].stmts_);
+    }
+#line 1397 "parser.cpp"
     break;
 
   case 31: /* scope: LBRACE scoped_lines RBRACE  */
-#line 198 "parser.y"
-                               {(yyval.body_) = (yyvsp[-1].body_);}
-#line 1392 "parser.cpp"
+#line 211 "parser.y"
+                               {
+        std::vector<std::unique_ptr<Statment_node>> body;
+        for (auto stmt : *(yyvsp[-1].stmts_))
+            body.push_back(std::unique_ptr<Statment_node>(stmt));
+        delete (yyvsp[-1].stmts_);
+        (yyval.body_holder_) = Body_holder_node(body);    
+        }
+#line 1409 "parser.cpp"
     break;
 
 
-#line 1396 "parser.cpp"
+#line 1413 "parser.cpp"
 
       default: break;
     }
@@ -1585,7 +1602,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 201 "parser.y"
+#line 220 "parser.y"
 
 
 bool eval(Value v){

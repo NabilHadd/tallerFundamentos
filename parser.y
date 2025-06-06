@@ -15,8 +15,9 @@ std::set<Statment_node*> global_body_cache;
 %}
 
 %union {
+    std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
-    Body_node*      body_;
+    Body_holder_node*      body_holder_;
 
     Type_id*        type_;
     Logic_op*       l_op_;
@@ -37,7 +38,8 @@ std::set<Statment_node*> global_body_cache;
 %type   <l_op_>     L_op
 %type   <type_>     type_id
 %type   <stmt_>     line_non_empty
-%type   <body_>     scope scoped_lines
+%type   <body_holder_>     scope
+%type   <stmts_>    scoped_lines
 
 
 %token INIT INT DOUBLE BOOL STR
@@ -75,7 +77,9 @@ line_non_empty:
 
     }
     | IF LPAREN exp RPAREN scope'\n'    {
-        $$ = new If_node($3, $5);
+        auto body_holder = dynamic_cast<Body_holder_node*>($5);
+        $$ = new If_node($3, std::move(body_holder->body));
+        delete body_holder;//es necesario???
 
     }     
     | PRINT LPAREN exp RPAREN '\n'      {
@@ -193,18 +197,24 @@ type_id:
 
 scoped_lines:
     line_non_empty          {
-        $$ = new Body_node();
-        $$->add_statment(std::unique_ptr<Statment_node>($1));
+        $$ = new std::vector<Statment_node*>();
+        $$->push_back($1);
         global_body_cache.insert($1);
     }
     |scoped_lines line_non_empty {
-        $1->add_statment(std::unique_ptr<Statment_node>($2));
+        $1->push_back($2);
         global_body_cache.insert($2);
         $$ = $1;
     }
     ;
 scope:
-    LBRACE scoped_lines RBRACE {$$ = $2;}
+    LBRACE scoped_lines RBRACE {
+        std::vector<std::unique_ptr<Statment_node>> body;
+        for (auto stmt : *$2)
+            body.push_back(std::unique_ptr<Statment_node>(stmt));
+        delete $2;
+        $$ = Body_holder_node(std::move(body));    
+        }
     ;
 
 %%

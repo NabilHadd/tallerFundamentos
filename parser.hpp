@@ -92,10 +92,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "parser.y"
+#line 17 "parser.y"
 
+    std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
-    Body_node*      body_;
+    Body_holder_node*      body_holder_;
 
     Type_id*        type_;
     Logic_op*       l_op_;
@@ -106,7 +107,7 @@ union YYSTYPE
     bool            bool_;
     char*           str_;
 
-#line 110 "parser.hpp"
+#line 111 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

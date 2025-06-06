@@ -1,6 +1,8 @@
 #include <memory>
 #include <stdio.h>
 #include <vector>
+#include <set>
+#include <stack>
 #include "Symbol_base.h"
 #include "Symbol_table.h"
 #include "utils.h"
@@ -45,23 +47,23 @@ class Statment_node : public Node { //nodo statment, almacena una instruccion
 
 
 
-class Body_node : public Statment_node { //un nodo que almacena una lista de instrucciones, osea Statment_node
+class Body_holder_node {
 public:
-    std::vector<std::unique_ptr<Statment_node>> statments;
+    std::vector<std::unique_ptr<Statment_node>> body;
     
-    void add_statment(std::unique_ptr<Statment_node> stmt);//permite añadir una instruccion a la cola de instrucciones
-    void execute () override;//debe ejecutar la instruccion.
+    Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b);
     
 };
 
 
 
 class If_node : public Statment_node{
-public:
-    Symbol_base* cond;//es la condicion que debe cumplirse, para eso hay que generar un metodo "eval" que evalue la condicion (con un visit seguramente)
-    Body_node* body_node;//almacena la lista de instrucciones, aunque no se si deberia declararse como: Body_node* body_node; o asi esta bien.
 
-    If_node(Symbol_base* cond, Body_node* body_node);//constructor
+    Symbol_base* cond;
+    std::vector<std::unique_ptr<Statment_node>> body;
+
+public:
+    If_node(Symbol_base* cond, std::vector<std::unique_ptr<Statment_node>> body);//constructor
         
     void execute() override;//en este caso execute, siempre que se cumpla la cond deberia llamar al execute de body, recorriendo cada instruccion
 };

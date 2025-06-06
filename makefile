@@ -15,7 +15,7 @@ CPP_SRCS = Symbol_base.cpp Symbol_table.cpp nodes.cpp
 
 # Compilador y flags
 CXX = g++
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++20
 
 # Regla por defecto
 all: $(TARGET)
