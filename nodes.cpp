@@ -169,7 +169,7 @@ void Ins_node::execute(){
 //Nodo para cuerpo de un scope----------------------------------------
 Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b)
 : body(std::move(b)){}
-*///--------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 
 
