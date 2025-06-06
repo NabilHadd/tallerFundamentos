@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <vector>
 #include "Symbol_base.h"
+#include "Symbol_table.h"
 #include "utils.h"
 
 
@@ -15,6 +16,17 @@ public:
     Logic get_op() const;
 
     ~Logic_op();
+};
+
+class Type_id {
+private:
+    Type id;
+public:
+    Type_id(Type id);
+    
+    Type get_id() const;
+    
+    ~Type_id();
 };
 
 
@@ -65,6 +77,46 @@ public:
     void execute() override;
 };
 
+
+//Declaracion e instancia-----------------------------------------------------------------------------------------------
+class Dec_node : public Statment_node{
+private:
+    Type t_id;
+    std::string name;//usar unique_ptr al guardar en la tabla
+    Symbol_table* table;
+public:
+    Dec_node(Type t_id, const std::string& name, Symbol_table* table);
+    
+    void execute() override;
+};
+
+class Dec_ins_node : public Statment_node{
+private:
+    Type t_id;
+    std::string name;
+    Type t;
+    Value v; //usar unique si esque se va a guardar en symbol_table
+    Symbol_table* table;
+public:
+    Dec_ins_node(Type t_id, const std::string& name, Symbol_base* exp, Symbol_table* table);
+    
+    void execute() override;
+};
+
+class Ins_node : public Statment_node{
+private:
+    std::string name;
+    Type t;
+    Value v;
+    Symbol_table* table;
+public:
+    
+    Ins_node(const std::string& name, Symbol_base* exp, Symbol_table* table);
+
+    void execute() override;
+    
+};
+//----------------------------------------------------------------------------------------------------------------------
 
 
 

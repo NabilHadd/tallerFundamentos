@@ -11,9 +11,162 @@ Logic Logic_op::get_op() const { return this->op;}
 
 
 
+//Identificador de tipo------------------------------
+Type_id::Type_id(Type id){
+    this->id = id;
+}
+
+Type Type_id::get_id() const{
+    return this->id;
+}
+//---------------------------------------------------
+
+
+
+
+//Declarar, Declarar e istanciar , instaciar-------------------------
+Dec_node::Dec_node(Type t_id, const std::string& name, Symbol_table* table){
+    this->t_id = t_id;
+    this->name = name;
+    this->table = table;
+}
+    
+void Dec_node::execute() {
+    if(t_id == Type::TYPE_INT)
+        this->table->insert(this->name, std::make_unique<Symbol_base>(t_id, 0 ));
+    else if (t_id == Type::TYPE_DOUBLE)
+        this->table->insert(this->name, std::make_unique<Symbol_base>(t_id, 0 ));
+    else if (t_id == Type::TYPE_BOOL)
+        this->table->insert(this->name, std::make_unique<Symbol_base>(t_id, false ));
+    else if (t_id == Type::TYPE_STRING)
+        this->table->insert(this->name, std::make_unique<Symbol_base>(t_id, "" ));
+}
+
+
+Dec_ins_node::Dec_ins_node(Type t_id, const std::string& name, Symbol_base* exp, Symbol_table* table){
+    this->t_id = t_id;
+    this->name = name;
+    this->t = exp->get_type();
+    this-> v = exp->get_value();
+    this->table = table;
+}
+    
+void Dec_ins_node::execute(){
+    if(this->t_id == Type::TYPE_INT){
+        if(this->t == Type::TYPE_INT){
+    
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, std::get<int>(this->v)));
+
+        }else if(this->t == Type::TYPE_DOUBLE){
+
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, static_cast<int>(std::get<double>(this->v))));
+
+        }else{yyerror("Tipo incompatible con int");}
+
+    }else if(this->t_id == Type::TYPE_DOUBLE){
+        if(this->t == Type::TYPE_INT){
+
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, static_cast<double>(std::get<int>(this->v))));
+
+        }else if(this->t == Type::TYPE_DOUBLE){
+
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, std::get<double>(this->v)));
+
+        }else{yyerror("Tipo incompatible con double");}
+
+    }else if(this->t_id == Type::TYPE_BOOL){
+
+        std::visit([&](auto&& arg) {
+            bool bool_val;
+            using T = std::decay_t<decltype(arg)>;
+
+            if constexpr (std::is_same_v<T, std::string>){
+                if(arg == "true")
+                    bool_val = true;
+                else
+                    bool_val = false;
+            }else if constexpr (std::is_same_v<T, bool>){
+                bool_val = arg;
+            }else{
+                if (arg > 0)
+                    bool_val = true;
+                else
+                    bool_val = false;
+            }
+
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, bool_val));
+
+        }, this->v);
+
+    }else if(this->t_id == Type::TYPE_STRING){
+
+        std::visit([&](auto&& arg) {
+            std::string str_val;
+            using T = std::decay_t<decltype(arg)>;
+
+            if constexpr (std::is_same_v<T, std::string>)
+                str_val = arg;
+            else if constexpr (std::is_same_v<T, bool>)
+                str_val = arg ? "true" : "false";
+            else
+                str_val = std::to_string(arg);
+
+            this->table->insert(this->name, std::make_unique<Symbol_base>(this->t_id, str_val));
+
+        }, this->v);
+    }
+}
+
+
+
+Ins_node::Ins_node(const std::string& name, Symbol_base* exp, Symbol_table* table){
+    this->name = name;
+    this->t = exp->get_type();
+    this->v = exp->get_value();
+    this->table = table;
+}
+
+void Ins_node::execute(){
+    Symbol_base* var = this->table->get(this->name);
+
+    if(var->get_type() == this->t){
+
+        this->table->update(this->name, std::make_unique<Symbol_base>(this->t, this->v));
+
+    }else if(var->get_type() == Type::TYPE_INT and this->t == Type::TYPE_DOUBLE){
+
+        this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_INT, static_cast<int>(std::get<double>(this->v))));
+
+    }else if(var->get_type() == Type::TYPE_DOUBLE and this->t == Type::TYPE_INT){
+
+        this->table->update(this->name, std::make_unique<Symbol_base>(this->t, static_cast<double>(std::get<int>(this->v))));
+
+    }else if (var->get_type() == Type::TYPE_STRING) {
+
+        std::visit([&](auto&& arg) {
+            std::string str_val;
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, std::string>)
+                str_val = arg;
+            else if constexpr (std::is_same_v<T, bool>)
+                str_val = arg ? "true" : "false";
+            else
+                str_val = std::to_string(arg);
+            this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
+        }, this->v);
+
+    } else {
+        yyerror("tipos incompatibles");
+    }
+
+}
+    
+//-------------------------------------------------------------------
+
+
 //Nodo para cuerpo de un scope----------------------------------------
 void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
-    this->statments.push_back(std::move(stmt))
+    this->statments.push_back(std::move(stmt));
 }
 
 void Body_node::execute(){

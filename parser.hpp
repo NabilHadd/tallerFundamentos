@@ -94,13 +94,14 @@ union YYSTYPE
 {
 #line 15 "parser.y"
 
+    Type_id* type_;
     Logic_op* l_op_;
     Symbol_base* var_;
     double num_;
     bool bool_;
     char* str_;
 
-#line 104 "parser.hpp"
+#line 105 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

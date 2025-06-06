@@ -8,11 +8,12 @@
 
 extern int yylex();
 extern int yylineno;
-Symbol_table table;
+Symbol_table* table;
 
 %}
 
 %union {
+    Type_id* type_;
     Logic_op* l_op_;
     Symbol_base* var_;
     double num_;
@@ -27,6 +28,7 @@ Symbol_table table;
 
 %type <var_> exp
 %type <l_op_> L_op;
+%type <type_> type_id;
 
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
@@ -50,8 +52,22 @@ input:
     ;
 
 line_non_empty:
-    exp '\n'                      
-    | DOUBLE VAR '\n'                   {
+    exp '\n'
+    | type_id VAR '\n'      {
+        Dec_node node($1->get_id(), $2, table);
+        node.execute();
+        
+    }
+    | type_id VAR INIT exp  {
+        Dec_ins_node node($1->get_id(), $2, $4, table);
+        node.execute();
+    }
+    | VAR INIT exp          {
+        Ins_node node($1->get_id(), $3, table);
+        node.execute();
+    }
+                      
+    /*| DOUBLE VAR '\n'                   {
         table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, 0 ));
     }
     | BOOL VAR '\n'                     {
@@ -65,12 +81,12 @@ line_non_empty:
     }
     | IF LPAREN exp RPAREN scope'\n'    {
         std::cout << "en construccion";
-    }        
+    } */       
     | PRINT LPAREN exp RPAREN '\n'     {
         Print_node node($3->get_value());
         node.execute();
     }
-    | INT VAR INIT exp '\n'             {
+    /*| INT VAR INIT exp '\n'             {
         if($4->get_type() == Type::TYPE_INT){
     
             table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_INT, std::get<int>($4->get_value())));
@@ -81,9 +97,9 @@ line_non_empty:
 
         }else{yyerror("Tipo incompatible con int");}
                                     
-    }
+    }*/
 
-    | DOUBLE VAR INIT exp '\n'          {
+    /*| DOUBLE VAR INIT exp '\n'          {
         if($4->get_type() == Type::TYPE_INT){
 
             table.insert($2, std::make_unique<Symbol_base>(Type::TYPE_DOUBLE, static_cast<double>(std::get<int>($4->get_value()))));
@@ -94,9 +110,9 @@ line_non_empty:
 
         }else{yyerror("Tipo incompatible con double");}
                                     
-    }
+    }*/
 
-    | BOOL VAR INIT exp '\n'        {
+    /*| BOOL VAR INIT exp '\n'        {
         std::string name = $2;
         Symbol_base* val = $4;
 
@@ -121,9 +137,9 @@ line_non_empty:
             table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, bool_val));
 
         }, val->get_value());
-    }
+    }*/
 
-    | STR VAR INIT exp '\n'         {
+    /*| STR VAR INIT exp '\n'         {
         std::string name = $2;
         Symbol_base* val = $4;
 
@@ -141,9 +157,9 @@ line_non_empty:
             table.insert(name, std::make_unique<Symbol_base>(Type::TYPE_STRING, str_val));
 
         }, val->get_value());
-    }
+    }*/
 
-    | VAR INIT exp '\n'             {
+    /*| VAR INIT exp '\n'             {
         std::string name = $1;
         Type t = $3->get_type();
         Value v = $3->get_value();
@@ -179,7 +195,7 @@ line_non_empty:
         } else {
             yyerror("tipos incompatibles");
         }
-    }
+    }*/
 
     ;
 line:
@@ -201,7 +217,7 @@ exp:
         $$ = new Symbol_base(Type::TYPE_STRING, $1);
     }
     | VAR                   { 
-        Symbol_base* aux = table.get($1);
+        Symbol_base* aux = table->get($1);
         Value v = aux->get_value();
         Type t = aux->get_type();
 
@@ -256,7 +272,8 @@ exp:
     //| exp POSTINC           { $$ = $1++; }
     ;
 
-L_op: EQ {
+L_op: 
+    EQ {
         $$ = new Logic_op(Logic::IS_EQ);
     } 
     | GR {
@@ -269,6 +286,19 @@ L_op: EQ {
         $$ = new Logic_op(Logic::IS_EQ_WR);
     }
     ;
+
+type_id: 
+    INT         {
+        $$ = new Type_id(Type::TYPE_INT);
+    } | DOUBLE  {
+        $$ = new Type_id(Type::TYPE_DOUBLE);
+    } | BOOL    {
+        $$ = new Type_id(Type::TYPE_BOOL);
+    } | STR     {
+        $$ = new Type_id(Type::TYPE_STRING);
+    }
+    ;
+
 
 scoped_lines:
     line_non_empty
@@ -314,7 +344,7 @@ int yyerror(const char* s){
 
 int main(void) {
     yyparse();
-    table.clean_table();
+    table->clean_table();
     return 0;
 }
 
