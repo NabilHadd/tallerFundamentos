@@ -133,6 +133,7 @@ private:
     Symbol_base* aux;
 public:
     Logic_node(Symbol_base* exp1, Symbol_base* exp2, Logic_op* l_op);
+    Symbol_base* get_Symbol();
     void execute() override;
 };
 

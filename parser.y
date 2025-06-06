@@ -208,7 +208,9 @@ exp:
         $$ = new Symbol_base(t, v);
     }
     | exp exp L_op {
-        Logic_node node($1, $2, $3->get_op());
+        Logic_node node($1, $2, $3);
+        node.execute();
+        $$ = node.get_Symbol();
     }
     | exp exp ADD           {
         

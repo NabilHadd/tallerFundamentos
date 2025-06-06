@@ -284,18 +284,27 @@ Logic_node::Logic_node(Symbol_base* exp1, Symbol_base* exp2, Logic_op* l_op){
 
 Symbol_base* Logic_node::get_Symbol(){return this->aux;}
 
-void Logic_node::execute(){
+void Logic_node::execute(){ //Hacer chequeo de tipos muchisimo mas exhaustivo
     this->aux = new Symbol_base(Type::TYPE_BOOL, true);
-    if(this->op == Logic::IS_EQ){
-        (v1 == v2) ? this->aux->set_value(true) : this->aux->set_value(false);
-    }else if(this->op == Logic::IS_GR){
-        (v1 > v2) ?  this->aux->set_value(true)  : this->aux->set_value(false);
-    }else if(this->op == Logic::IS_WR){
-        (v1 < v2) ?  this->aux->set_value(true)  : this->aux->set_value(false);
-    }else if(this->op == Logic::IS_EQ_GR){
-        (v1 >= v2) ? this->aux->set_value(true) : this->aux->set_value(false);
-    }else if(this->op == Logic::IS_EQ_WR){
-        (v1 <= v2) ? this->aux->set_value(true) : this->aux->set_value(false);
-    }
+    std::visit([&](auto&& a, auto&& b){
+        using A = std::decay_t<decltype(a)>; 
+        using B = std::decay_t<decltype(b)>; 
+        if constexpr (std::is_same_v<A, B>){
+            if(this->op == Logic::IS_EQ){
+                (a == b) ? this->aux->set_value(true) : this->aux->set_value(false);
+            }else if(this->op == Logic::IS_GR){
+                (a > b) ?  this->aux->set_value(true)  : this->aux->set_value(false);
+            }else if(this->op == Logic::IS_WR){
+                (a < b) ?  this->aux->set_value(true)  : this->aux->set_value(false);
+            }else if(this->op == Logic::IS_EQ_GR){
+                (a >= b) ? this->aux->set_value(true) : this->aux->set_value(false);
+            }else if(this->op == Logic::IS_EQ_WR){
+                (a <= b) ? this->aux->set_value(true) : this->aux->set_value(false);
+            }
+        }else{
+            yyerror("tipos incompatibles para comparacion");
+        }
+
+    }, v1, v2);
 }
 //-----------------------------------------------------------------------------------------

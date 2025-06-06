@@ -1,6 +1,3 @@
-double b = 4.32432
-int a = 1
-double x
-x = a b +
-double z = x
-cout("es double " z +)
+int a = 0
+int b = 1
+a b ==

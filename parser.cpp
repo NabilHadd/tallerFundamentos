@@ -543,8 +543,8 @@ static const yytype_int16 yyrline[] =
 {
        0,    48,    48,    49,    53,    54,    57,    60,    63,    66,
       69,    73,    86,    99,   126,   146,   186,   187,   194,   197,
-     200,   203,   210,   213,   271,   280,   291,   305,   308,   310,
-     312,   314,   320,   321,   324
+     200,   203,   210,   215,   273,   282,   293,   307,   310,   312,
+     314,   316,   322,   323,   326
 };
 #endif
 
@@ -1371,13 +1371,15 @@ yyreduce:
   case 22: /* exp: exp exp L_op  */
 #line 210 "parser.y"
                    {
-        Logic_node node((yyvsp[-2].var_), (yyvsp[-1].var_), (yyvsp[0].l_op_)->get_op());
+        Logic_node node((yyvsp[-2].var_), (yyvsp[-1].var_), (yyvsp[0].l_op_));
+        node.execute();
+        (yyval.var_) = node.get_Symbol();
     }
-#line 1377 "parser.cpp"
+#line 1379 "parser.cpp"
     break;
 
   case 23: /* exp: exp exp ADD  */
-#line 213 "parser.y"
+#line 215 "parser.y"
                             {
         
         Type t1 = (yyvsp[-2].var_)->get_type();
@@ -1436,11 +1438,11 @@ yyreduce:
             
         }*/
     }
-#line 1440 "parser.cpp"
+#line 1442 "parser.cpp"
     break;
 
   case 24: /* exp: exp exp SUB  */
-#line 271 "parser.y"
+#line 273 "parser.y"
                             {
         Type t1 = (yyvsp[-2].var_)->get_type();
         Type t2 = (yyvsp[-1].var_)->get_type();
@@ -1450,11 +1452,11 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1454 "parser.cpp"
+#line 1456 "parser.cpp"
     break;
 
   case 25: /* exp: exp exp MUL  */
-#line 280 "parser.y"
+#line 282 "parser.y"
                             {
             
         Type t1 = (yyvsp[-2].var_)->get_type();
@@ -1465,11 +1467,11 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1469 "parser.cpp"
+#line 1471 "parser.cpp"
     break;
 
   case 26: /* exp: exp exp DIV  */
-#line 291 "parser.y"
+#line 293 "parser.y"
                             {
         Type t1 = (yyvsp[-2].var_)->get_type();
         Type t2 = (yyvsp[-1].var_)->get_type();
@@ -1479,51 +1481,51 @@ yyreduce:
         node.execute();
         (yyval.var_) = node.get_Symbol();
     }
-#line 1483 "parser.cpp"
+#line 1485 "parser.cpp"
     break;
 
   case 27: /* L_op: EQ  */
-#line 305 "parser.y"
+#line 307 "parser.y"
          {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ);
     }
-#line 1491 "parser.cpp"
+#line 1493 "parser.cpp"
     break;
 
   case 28: /* L_op: GR  */
-#line 308 "parser.y"
+#line 310 "parser.y"
          {
         (yyval.l_op_) = new Logic_op(Logic::IS_GR);
     }
-#line 1499 "parser.cpp"
+#line 1501 "parser.cpp"
     break;
 
   case 29: /* L_op: WR  */
-#line 310 "parser.y"
+#line 312 "parser.y"
            {
         (yyval.l_op_) = new Logic_op(Logic::IS_WR);
     }
-#line 1507 "parser.cpp"
+#line 1509 "parser.cpp"
     break;
 
   case 30: /* L_op: EQ_GR  */
-#line 312 "parser.y"
+#line 314 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_GR);
     }
-#line 1515 "parser.cpp"
+#line 1517 "parser.cpp"
     break;
 
   case 31: /* L_op: EQ_WR  */
-#line 314 "parser.y"
+#line 316 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_WR);
     }
-#line 1523 "parser.cpp"
+#line 1525 "parser.cpp"
     break;
 
 
-#line 1527 "parser.cpp"
+#line 1529 "parser.cpp"
 
       default: break;
     }
@@ -1716,7 +1718,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 327 "parser.y"
+#line 329 "parser.y"
 
 
 bool eval(Value v){
