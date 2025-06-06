@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include <set>
 #include "Symbol_table.h"
 #include "utils.h"
 #include "nodes.h"
@@ -9,6 +10,7 @@
 extern int          yylex();
 extern int          yylineno;
 Symbol_table        table;
+std::set<Statment_node*> global_body_cache;
 
 %}
 
@@ -85,7 +87,12 @@ line_non_empty:
 
 line:
     '\n'
-    | line_non_empty {$1->execute(); delete $1;}
+    | line_non_empty {
+        if(!global_body_cache.contains($1)){
+            $1->execute();        
+        }
+        delete $1;
+    }
     ;
     
 
@@ -188,9 +195,11 @@ scoped_lines:
     line_non_empty          {
         $$ = new Body_node();
         $$->add_statment(std::unique_ptr<Statment_node>($1));
+        global_body_cache.insert($1);
     }
     |scoped_lines line_non_empty {
         $1->add_statment(std::unique_ptr<Statment_node>($2));
+        global_body_cache.insert($2);
         $$ = $1;
     }
     ;

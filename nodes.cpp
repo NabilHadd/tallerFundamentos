@@ -171,7 +171,8 @@ void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
 
 void Body_node::execute(){
     for (auto& stmt : statments){
-        stmt->execute();    
+        stmt->execute();
+        global_body_cache.erase(stmt.get());    
     }
 
 }
