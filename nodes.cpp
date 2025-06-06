@@ -13,11 +13,13 @@ Logic Logic_op::get_op() const { return this->op;}
 
 //Nodo para cuerpo de un scope----------------------------------------
 void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
-    
+    this->statments.push_back(std::move(stmt))
 }
 
 void Body_node::execute(){
-
+    for (auto& stmt : statments){
+        stmt->execute();    
+    }
 
 }
 //--------------------------------------------------------------------
