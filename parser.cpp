@@ -544,9 +544,9 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    68,    68,    70,    76,    77,    81,    85,    89,    95,
-     113,   116,   119,   122,   125,   128,   133,   143,   152,   163,
-     178,   181,   183,   185,   187,   193,   195,   197,   199,   205,
-     209,   215
+     113,   116,   119,   122,   125,   128,   131,   134,   137,   142,
+     152,   155,   157,   159,   161,   167,   169,   171,   173,   179,
+     183,   189
 };
 #endif
 
@@ -1194,7 +1194,7 @@ yyreduce:
   case 9: /* line_non_empty: PRINT LPAREN exp RPAREN '\n'  */
 #line 95 "parser.y"
                                         {
-        (yyval.stmt_) = new Print_node((yyvsp[-2].expr_)->get_value());
+        (yyval.stmt_) = new Print_node((yyvsp[-2].expr_));
 
     }
 #line 1201 "parser.cpp"
@@ -1243,163 +1243,137 @@ yyreduce:
   case 15: /* exp: exp exp L_op  */
 #line 128 "parser.y"
                    {
-        Logic_node node((yyvsp[-2].expr_), (yyvsp[-1].expr_), (yyvsp[0].l_op_));
-        node.execute();
-        //$$ = node.get_Symbol();
+        (yyval.expr_) = new Logic_node((yyvsp[-2].expr_), (yyvsp[-1].expr_), (yyvsp[0].l_op_));
     }
-#line 1251 "parser.cpp"
+#line 1249 "parser.cpp"
     break;
 
   case 16: /* exp: exp exp ADD  */
-#line 133 "parser.y"
+#line 131 "parser.y"
                             {
-        
-        Type t1 = (yyvsp[-2].expr_)->get_type();
-        Type t2 = (yyvsp[-1].expr_)->get_type();
-        Value v1 = (yyvsp[-2].expr_)->get_value();
-        Value v2 = (yyvsp[-1].expr_)->get_value();
-        Add_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        (yyval.expr_)  = new Add_node((yyvsp[-2].expr_), (yyvsp[-1].expr_));
     }
-#line 1266 "parser.cpp"
+#line 1257 "parser.cpp"
     break;
 
   case 17: /* exp: exp exp SUB  */
-#line 143 "parser.y"
+#line 134 "parser.y"
                             {
-        Type t1 = (yyvsp[-2].expr_)->get_type();
-        Type t2 = (yyvsp[-1].expr_)->get_type();
-        Value v1 = (yyvsp[-2].expr_)->get_value();
-        Value v2 = (yyvsp[-1].expr_)->get_value();
-        Sub_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        (yyval.expr_) = new Sub_node((yyvsp[-2].expr_), (yyvsp[-1].expr_));
     }
-#line 1280 "parser.cpp"
+#line 1265 "parser.cpp"
     break;
 
   case 18: /* exp: exp exp MUL  */
-#line 152 "parser.y"
+#line 137 "parser.y"
                             {
             
-        Type t1 = (yyvsp[-2].expr_)->get_type();
-        Type t2 = (yyvsp[-1].expr_)->get_type();
-        Value v1 = (yyvsp[-2].expr_)->get_value();
-        Value v2 = (yyvsp[-1].expr_)->get_value();
-        Mul_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        (yyval.expr_) = new Mul_node((yyvsp[-2].expr_), (yyvsp[-1].expr_));
     }
-#line 1295 "parser.cpp"
+#line 1274 "parser.cpp"
     break;
 
   case 19: /* exp: exp exp DIV  */
-#line 163 "parser.y"
+#line 142 "parser.y"
                             {
-        Type t1 = (yyvsp[-2].expr_)->get_type();
-        Type t2 = (yyvsp[-1].expr_)->get_type();
-        Value v1 = (yyvsp[-2].expr_)->get_value();
-        Value v2 = (yyvsp[-1].expr_)->get_value();
-        Div_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+
+        (yyval.expr_) = new Div_node((yyvsp[-2].expr_), (yyvsp[-1].expr_));
     }
-#line 1309 "parser.cpp"
+#line 1283 "parser.cpp"
     break;
 
   case 20: /* L_op: EQ  */
-#line 178 "parser.y"
+#line 152 "parser.y"
        {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ);
     }
-#line 1317 "parser.cpp"
+#line 1291 "parser.cpp"
     break;
 
   case 21: /* L_op: GR  */
-#line 181 "parser.y"
+#line 155 "parser.y"
          {
         (yyval.l_op_) = new Logic_op(Logic::IS_GR);
     }
-#line 1325 "parser.cpp"
+#line 1299 "parser.cpp"
     break;
 
   case 22: /* L_op: WR  */
-#line 183 "parser.y"
+#line 157 "parser.y"
            {
         (yyval.l_op_) = new Logic_op(Logic::IS_WR);
     }
-#line 1333 "parser.cpp"
+#line 1307 "parser.cpp"
     break;
 
   case 23: /* L_op: EQ_GR  */
-#line 185 "parser.y"
+#line 159 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_GR);
     }
-#line 1341 "parser.cpp"
+#line 1315 "parser.cpp"
     break;
 
   case 24: /* L_op: EQ_WR  */
-#line 187 "parser.y"
+#line 161 "parser.y"
               {
         (yyval.l_op_) = new Logic_op(Logic::IS_EQ_WR);
     }
-#line 1349 "parser.cpp"
+#line 1323 "parser.cpp"
     break;
 
   case 25: /* type_id: INT  */
-#line 193 "parser.y"
+#line 167 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_INT);
     }
-#line 1357 "parser.cpp"
+#line 1331 "parser.cpp"
     break;
 
   case 26: /* type_id: DOUBLE  */
-#line 195 "parser.y"
+#line 169 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_DOUBLE);
     }
-#line 1365 "parser.cpp"
+#line 1339 "parser.cpp"
     break;
 
   case 27: /* type_id: BOOL  */
-#line 197 "parser.y"
+#line 171 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_BOOL);
     }
-#line 1373 "parser.cpp"
+#line 1347 "parser.cpp"
     break;
 
   case 28: /* type_id: STR  */
-#line 199 "parser.y"
+#line 173 "parser.y"
                 {
         (yyval.type_) = new Type_id(Type::TYPE_STRING);
     }
-#line 1381 "parser.cpp"
+#line 1355 "parser.cpp"
     break;
 
   case 29: /* scoped_lines: line_non_empty  */
-#line 205 "parser.y"
+#line 179 "parser.y"
                             {
         (yyval.stmts_) = new std::vector<Statment_node*>();
         (yyval.stmts_)->push_back((yyvsp[0].stmt_));
     }
-#line 1390 "parser.cpp"
+#line 1364 "parser.cpp"
     break;
 
   case 30: /* scoped_lines: scoped_lines line_non_empty  */
-#line 209 "parser.y"
+#line 183 "parser.y"
                                  {
         (yyvsp[-1].stmts_)->push_back((yyvsp[0].stmt_));
         (yyval.stmts_) = (yyvsp[-1].stmts_);
     }
-#line 1399 "parser.cpp"
+#line 1373 "parser.cpp"
     break;
 
   case 31: /* scope: LBRACE scoped_lines RBRACE  */
-#line 215 "parser.y"
+#line 189 "parser.y"
                                {
         std::vector<std::unique_ptr<Statment_node>> body;
         for (auto stmt : *(yyvsp[-1].stmts_))
@@ -1407,11 +1381,11 @@ yyreduce:
         delete (yyvsp[-1].stmts_);
         (yyval.body_holder_) = new Body_holder_node(std::move(body));    
         }
-#line 1411 "parser.cpp"
+#line 1385 "parser.cpp"
     break;
 
 
-#line 1415 "parser.cpp"
+#line 1389 "parser.cpp"
 
       default: break;
     }
@@ -1604,7 +1578,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 224 "parser.y"
+#line 198 "parser.y"
 
 
 bool eval(Value v){
@@ -1634,7 +1608,7 @@ bool eval(Value v){
 
 int yyerror(const char* s){
     std::cerr << "Error in line "<< yylineno << ": "<< s << std::endl;
-    //exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
     return 0;
 }
 
@@ -1642,7 +1616,6 @@ int yyerror(const char* s){
 int main(void) {
     yyparse();
     program.execute();
-    table.print_table();
     table.clean_table();
     return 0;
 }

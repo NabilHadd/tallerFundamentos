@@ -95,7 +95,7 @@ union YYSTYPE
 {
 #line 19 "parser.y"
 
-    Expr_node* expr_
+    Expr_node* expr_;
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
     Body_holder_node*      body_holder_;

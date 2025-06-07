@@ -17,7 +17,7 @@ std::set<Statment_node*> global_body_cache;
 
 
 %union {
-    Expr_node* expr_
+    Expr_node* expr_;
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
     Body_holder_node*      body_holder_;
@@ -93,7 +93,7 @@ line_non_empty:
 
     }     
     | PRINT LPAREN exp RPAREN '\n'      {
-        $$ = new Print_node($3->get_value());
+        $$ = new Print_node($3);
 
     }
     ;
@@ -126,48 +126,22 @@ exp:
         $$ = new Var_node($1, &table);
     }
     | exp exp L_op {
-        Logic_node node($1, $2, $3);
-        node.execute();
-        //$$ = node.get_Symbol();
+        $$ = new Logic_node($1, $2, $3);
     }
     | exp exp ADD           {
-        
-        Type t1 = $1->get_type();
-        Type t2 = $2->get_type();
-        Value v1 = $1->get_value();
-        Value v2 = $2->get_value();
-        Add_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        $$  = new Add_node($1, $2);
     }
     | exp exp SUB           {
-        Type t1 = $1->get_type();
-        Type t2 = $2->get_type();
-        Value v1 = $1->get_value();
-        Value v2 = $2->get_value();
-        Sub_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        $$ = new Sub_node($1, $2);
     }
     | exp exp MUL           {
             
-        Type t1 = $1->get_type();
-        Type t2 = $2->get_type();
-        Value v1 = $1->get_value();
-        Value v2 = $2->get_value();
-        Mul_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+        $$ = new Mul_node($1, $2);
     }
 
     | exp exp DIV           {
-        Type t1 = $1->get_type();
-        Type t2 = $2->get_type();
-        Value v1 = $1->get_value();
-        Value v2 = $2->get_value();
-        Div_node node(t1, t2, v1, v2);
-        node.execute();
-        //$$ = node.get_Symbol();
+
+        $$ = new Div_node($1, $2);
     }
     //| exp exp POW           { $$ = pow($1, $2); }
     //| exp INCP              { $$ = ++$1; }
@@ -250,7 +224,7 @@ bool eval(Value v){
 
 int yyerror(const char* s){
     std::cerr << "Error in line "<< yylineno << ": "<< s << std::endl;
-    //exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
     return 0;
 }
 
@@ -258,7 +232,6 @@ int yyerror(const char* s){
 int main(void) {
     yyparse();
     program.execute();
-    table.print_table();
     table.clean_table();
     return 0;
 }

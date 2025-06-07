@@ -47,9 +47,9 @@ class Statment_node : public Node { //nodo statment, almacena una instruccion
 
 class Expr_node {
 public:
-    virtual ~Expr_node() = default;
     virtual Value get_value() const = 0;
-    virtual Type get_Type() const = 0;
+    virtual Type get_type() const = 0;
+    virtual ~Expr_node() = default;
      
 };
 
@@ -93,11 +93,11 @@ public:
 
 class If_node : public Statment_node{
 
-    Symbol_base* cond;
+    Expr_node* cond;
     std::vector<std::unique_ptr<Statment_node>> body;
 
 public:
-    If_node(Symbol_base* cond, std::vector<std::unique_ptr<Statment_node>>&& body);//constructor
+    If_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body);//constructor
         
     void execute() override;//en este caso execute, siempre que se cumpla la cond deberia llamar al execute de body, recorriendo cada instruccion
 };
@@ -106,9 +106,9 @@ public:
 
 class Print_node : public Statment_node{
 private:
-    Value v;
+    Expr_node* exp;
 public: 
-    Print_node(Value v);
+    Print_node(Expr_node* exp);
     
     void execute() override;
 };
@@ -145,11 +145,10 @@ class Dec_ins_node : public Statment_node{
 private:
     Type t_id;
     std::string name;
-    Type t;
-    Value v; //usar unique si esque se va a guardar en symbol_table
+    Expr_node* exp;
     Symbol_table* table;
 public:
-    Dec_ins_node(Type t_id, const std::string& name, Symbol_base* exp, Symbol_table* table);
+    Dec_ins_node(Type t_id, const std::string& name, Expr_node* exp, Symbol_table* table);
     
     void execute() override;
 };
@@ -157,12 +156,11 @@ public:
 class Ins_node : public Statment_node{
 private:
     std::string name;
-    Type t;
-    Value v;
+    Expr_node* exp;
     Symbol_table* table;
 public:
     
-    Ins_node(const std::string& name, Symbol_base* exp, Symbol_table* table);
+    Ins_node(const std::string& name, Expr_node* exp, Symbol_table* table);
 
     void execute() override;
     
@@ -185,7 +183,6 @@ public:
     
     Type get_type() const override;
     Value get_value() const override;
-    
 };
 
 class Var_node : public Expr_node {
@@ -196,7 +193,7 @@ public:
     Var_node(std::string name, Symbol_table* table);
     
     Type get_type() const override;
-    Value get_value() const override;
+    Value get_value() const override;   
 };
 
 
@@ -208,72 +205,64 @@ public:
 
 
 //aritmetica:------------------------------------------------------------------------------------------------------------
-class Add_node : public Statment_node{
+class Add_node : public Expr_node {
 private:
-    Type t1;
-    Type t2;
-    Value v1;
-    Value v2;
-    Symbol_base* aux;
+    Expr_node* exp1;
+    Expr_node* exp2;
+
 public:
-    Add_node(Type t1, Type t2, Value v1, Value v2);
-    Symbol_base* get_Symbol();
-    void execute() override;
+    Add_node(Expr_node* exp1, Expr_node* exp2);
+    Type get_type() const override;
+    Value get_value() const override;
 };
 
 
 
-class Mul_node : public Statment_node{
+class Mul_node : public Expr_node{
 private:
-    Type t1;
-    Type t2;
-    Value v1;
-    Value v2;
-    Symbol_base* aux;
+    Expr_node* exp1;
+    Expr_node* exp2;
+    
+    
 public:
-    Mul_node(Type t1, Type t2, Value v1, Value v2);
-    Symbol_base* get_Symbol();
-    void execute() override;
+    Mul_node(Expr_node* exp1, Expr_node* exp2);
+    Type get_type() const override;
+    Value get_value() const override;
 };
 
-class Div_node : public Statment_node{
+class Div_node : public Expr_node{
 private:
-    Type t1;
-    Type t2;
-    Value v1;
-    Value v2;
-    Symbol_base* aux;
+    Expr_node* exp1;
+    Expr_node* exp2;    
+
+
 public:
-    Div_node(Type t1, Type t2, Value v1, Value v2);
-    Symbol_base* get_Symbol();
-    void execute() override;
+    Div_node(Expr_node* exp1, Expr_node* exp2);
+    Type get_type() const override;
+    Value get_value() const override;
 };
 
-class Sub_node : public Statment_node{
+class Sub_node : public Expr_node{
 private:
-    Type t1;
-    Type t2;
-    Value v1;
-    Value v2;
-    Symbol_base* aux;
+    Expr_node* exp1;
+    Expr_node* exp2;
+
 public:
-    Sub_node(Type t1, Type t2, Value v1, Value v2);
-    Symbol_base* get_Symbol();
-    void execute() override;
+    Sub_node(Expr_node* exp1, Expr_node* exp2);
+    Type get_type() const override;
+    Value get_value() const override;
 };
 
-class Logic_node : public Statment_node {
+class Logic_node : public Expr_node {
 private:
-    Type t1;
-    Type t2;
-    Value v1;
-    Value v2;
+    Expr_node* exp1;
+    Expr_node* exp2;
     Logic op;
-    Symbol_base* aux;
+
 public:
-    Logic_node(Symbol_base* exp1, Symbol_base* exp2, Logic_op* l_op);
-    Symbol_base* get_Symbol();
-    void execute() override;
+    Logic_node(Expr_node* exp1, Expr_node* exp2, Logic_op* l_op);
+    Type get_type() const override;
+    Value get_value() const override;
 };
 
 
