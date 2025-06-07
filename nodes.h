@@ -102,6 +102,16 @@ public:
     void execute() override;//en este caso execute, siempre que se cumpla la cond deberia llamar al execute de body, recorriendo cada instruccion
 };
 
+class If_else_node : public Statment_node{
+    Expr_node* cond;
+    std::vector<std::unique_ptr<Statment_node>> body;
+    std::unique_ptr<Statment_node> branch;
+public:
+    If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>> body, std::unique_ptr<Statment_node> branch);
+    
+    void execute () override;
+};
+
 
 
 class Print_node : public Statment_node{

@@ -1,3 +1,14 @@
-int a = 1
-double b = 2
-cout(a b/ b a* +)
+double num = 305;
+int aux_num = num 10/;
+
+int a = 0;
+
+aux_num = aux_num 10*;
+
+if(num aux_num- 5 >=){
+    cout("redondear para arriba");
+}if(true){
+    cout("hola" " " + a +);
+}
+
+cout(aux_num);

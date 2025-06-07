@@ -1,0 +1,7 @@
+double num = 304
+double aux_num = num 10/
+int parse_num_aux = aux_num
+parse_num_aux = parse_num_aux 10 *
+cout(parse_num_aux)
+if(num parse_num_aux - 5 >=){cout("se redondea para arriba")
+}

@@ -73,26 +73,30 @@ input:
     ;
 
 line_non_empty:
-    '\n'
-    |type_id VAR '\n'                  {
+    type_id VAR ';'                  {
         $$ = new Dec_node($1->get_id(), $2, &table);
         
     }
-    | type_id VAR INIT exp '\n'         {
+    | type_id VAR INIT exp ';'         {
         $$ = new Dec_ins_node($1->get_id(), $2, $4, &table);
         
     }
-    | VAR INIT exp '\n'                 {
+    | VAR INIT exp ';'                 {
         $$ = new Ins_node($1, $3, &table);
 
     }
-    | IF LPAREN exp RPAREN scope'\n'    {
+    | IF LPAREN exp RPAREN scope    {
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new If_node($3, std::move(body_holder->body));
-        delete body_holder;//es necesario???
+        delete body_holder;
 
-    }     
-    | PRINT LPAREN exp RPAREN '\n'      {
+    }
+    | IF LPAREN exp RPAREN scope ELSE line_non_empty    {
+        auto body_holder = dynamic_cast<Body_holder_node*>($5);
+        $$ = new If_else_node($3, std::move(body_holder->body), std::unique_ptr<Statment_node>($7));
+        delete body_holder;
+    }
+    | PRINT LPAREN exp RPAREN ';'      {
         $$ = new Print_node($3);
 
     }

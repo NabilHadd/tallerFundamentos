@@ -1,5 +1,24 @@
 #include "nodes.h"
 
+
+
+Type type_cheq(Type t1, Type t2, char* msg){
+    if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
+        return t1;    
+    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
+        return t1;    
+    }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
+        return t2;    
+    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
+        return t1;    
+    }else{
+        yyerror(msg);
+        return Type::TYPE_INT;    
+    }
+}
+
+
+
 //Operador logico------------------------------
 Logic_op::Logic_op(Logic op){
     this->op = op;
@@ -224,10 +243,10 @@ If_node::If_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& 
 : cond(cond), body(std::move(body)){}
 
 void If_node::execute(){
-    bool condition = eval(cond->get_value());
+    bool condition = eval(this->cond->get_value());
 
     if (condition){
-        for(auto& stmt : body)
+        for(auto& stmt : this->body)
         stmt->execute();
     }
 
@@ -238,6 +257,27 @@ void If_node::execute(){
 
 
 
+
+
+//Nodo para else if statment, no scope--------------------------------------------------------
+If_else_node::If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>> body, std::unique_ptr<Statment_node> branch){
+    this->cond = cond;
+    this->body = body;
+    this->branch = branch;
+}
+    
+void If_else_node::execute () {
+    bool condition = eval(this->cond->get_value());
+
+    if (condition){
+        for(auto& stmt : this->body)
+        stmt->execute();
+    }else{
+        this->branch->execute();
+    }
+}
+
+//---------------------------------------------------------------------------------------------
 
 
 
@@ -402,19 +442,7 @@ Mul_node::Mul_node(Expr_node* exp1, Expr_node* exp2){
 Type Mul_node::get_type()const{
     Type t1 = this->exp1->get_type();
     Type t2 = this->exp2->get_type();
-    
-    if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t2 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t2;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
-        return t1;    
-    }else{
-        yyerror("tipos incompatibles para multiplicacion1");
-        return Type::TYPE_INT;    
-    }
+    return type_cheq(t1, t2, "chequeo de tipos incompatibles para multiplicacion");
 }
 
 
@@ -448,7 +476,7 @@ Value Mul_node::get_value()const{
         double res = a * b;
         return res;
     }else{
-        yyerror("tipos incompatibles para división");
+        yyerror("tipos incompatibles para multiplicacion");
         return 0;
     }
 }
@@ -468,18 +496,7 @@ Type Div_node::get_type()const{
     Type t1 = this->exp1->get_type();
     Type t2 = this->exp2->get_type();
     
-    if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t2 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t2;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
-        return t1;    
-    }else{
-        yyerror("tipos incompatibles para division1");
-        return Type::TYPE_INT;    
-    }
+    return type_cheq(t1, t2, "chequeo de tipos incompatibles para division");
 }
 Value Div_node::get_value()const{
     Type t1 = this->exp1->get_type();
@@ -531,18 +548,7 @@ Type Sub_node::get_type()const{
     Type t1 = this->exp1->get_type();
     Type t2 = this->exp2->get_type();
     
-    if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t1;    
-    }else if(t2 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
-        return t2;    
-    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
-        return t1;    
-    }else{
-        yyerror("tipos incompatibles para resta1");
-        return Type::TYPE_INT;    
-    }
+    return type_cheq(t1, t2, "chequeo de tipos incompatibles para resta");
 }
 
 Value Sub_node::get_value()const{

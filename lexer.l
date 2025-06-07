@@ -39,7 +39,8 @@ extern int yylineno;
 ">="                        { return EQ_GR;}
 "<="                        { return EQ_WR;}
 "/"                         { return DIV; }
-[\n]                        { return '\n'; }
+";"                         { return ';';}
+[\n]                ;
 [ \t]+              ;       // ignorar espacios y tabs
 \"([^\\\"]|\\.)*\"          {yytext[yyleng - 1] = '\0';
                              yylval.str_ = strdup(yytext + 1);
