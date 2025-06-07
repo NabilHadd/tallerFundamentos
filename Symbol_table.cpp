@@ -30,6 +30,11 @@ Symbol_base* Symbol_table::get(const std::string& name) const {
     }
 }
 
+void Symbol_table::print_table(){
+    for(const auto& [key, value] : this->table)
+        std::cout << key << " => "<< value << std::endl;
+}
+
 void Symbol_table::erase_symbol(const std::string& name){
     table.erase(name);
 }

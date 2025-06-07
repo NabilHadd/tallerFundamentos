@@ -17,6 +17,7 @@ std::set<Statment_node*> global_body_cache;
 
 
 %union {
+    Expr_node* expr_
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
     Body_holder_node*      body_holder_;
@@ -38,7 +39,7 @@ std::set<Statment_node*> global_body_cache;
 %token  <bool_>     T_BOOL
 %token  <bool_>     F_BOOL
 
-%type   <var_>      exp
+%type   <expr_>      exp
 %type   <l_op_>     L_op
 %type   <type_>     type_id
 %type   <stmt_>     line_non_empty
@@ -72,7 +73,8 @@ input:
     ;
 
 line_non_empty:
-    type_id VAR '\n'                  {
+    '\n'
+    |type_id VAR '\n'                  {
         $$ = new Dec_node($1->get_id(), $2, &table);
         
     }
@@ -109,28 +111,24 @@ line_non_empty:
 
 exp:
     NUM                     { 
-        $$ = new Symbol_base(Type::TYPE_DOUBLE, $1);                
+        $$ = new Const_node(Type::TYPE_DOUBLE, $1);                
     }
     |T_BOOL                 {
-        $$ = new Symbol_base(Type::TYPE_BOOL, true);    
+        $$ = new Const_node(Type::TYPE_BOOL, true);    
     }
     |F_BOOL                 {
-        $$ = new Symbol_base(Type::TYPE_BOOL, false);
+        $$ = new Const_node(Type::TYPE_BOOL, false);
     }
     |STRING                 {
-        $$ = new Symbol_base(Type::TYPE_STRING, $1);
+        $$ = new Const_node(Type::TYPE_STRING, $1);
     }
     | VAR                   { 
-        Symbol_base* aux = table.get($1);
-        Value v = aux->get_value();
-        Type t = aux->get_type();
-
-        $$ = new Symbol_base(t, v);
+        $$ = new Var_node($1, &table);
     }
     | exp exp L_op {
         Logic_node node($1, $2, $3);
         node.execute();
-        $$ = node.get_Symbol();
+        //$$ = node.get_Symbol();
     }
     | exp exp ADD           {
         
@@ -140,7 +138,7 @@ exp:
         Value v2 = $2->get_value();
         Add_node node(t1, t2, v1, v2);
         node.execute();
-        $$ = node.get_Symbol();
+        //$$ = node.get_Symbol();
     }
     | exp exp SUB           {
         Type t1 = $1->get_type();
@@ -149,7 +147,7 @@ exp:
         Value v2 = $2->get_value();
         Sub_node node(t1, t2, v1, v2);
         node.execute();
-        $$ = node.get_Symbol();
+        //$$ = node.get_Symbol();
     }
     | exp exp MUL           {
             
@@ -159,7 +157,7 @@ exp:
         Value v2 = $2->get_value();
         Mul_node node(t1, t2, v1, v2);
         node.execute();
-        $$ = node.get_Symbol();
+        //$$ = node.get_Symbol();
     }
 
     | exp exp DIV           {
@@ -169,7 +167,7 @@ exp:
         Value v2 = $2->get_value();
         Div_node node(t1, t2, v1, v2);
         node.execute();
-        $$ = node.get_Symbol();
+        //$$ = node.get_Symbol();
     }
     //| exp exp POW           { $$ = pow($1, $2); }
     //| exp INCP              { $$ = ++$1; }
@@ -252,7 +250,7 @@ bool eval(Value v){
 
 int yyerror(const char* s){
     std::cerr << "Error in line "<< yylineno << ": "<< s << std::endl;
-    exit(EXIT_FAILURE);
+    //exit(EXIT_FAILURE);
     return 0;
 }
 
@@ -260,6 +258,7 @@ int yyerror(const char* s){
 int main(void) {
     yyparse();
     program.execute();
+    table.print_table();
     table.clean_table();
     return 0;
 }

@@ -1,2 +1,2 @@
 int a = 3
-cout(a)
+int b = 0

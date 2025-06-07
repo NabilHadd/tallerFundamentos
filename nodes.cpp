@@ -1,6 +1,4 @@
 #include "nodes.h"
-extern std::set<Statment_node*> global_body_cache;
-extern std::stack<bool> exec_context;
 
 //Operador logico------------------------------
 Logic_op::Logic_op(Logic op){
@@ -9,6 +7,10 @@ Logic_op::Logic_op(Logic op){
 
 Logic Logic_op::get_op() const { return this->op;}
 //----------------------------------------------
+
+
+
+
 
 
 
@@ -22,6 +24,11 @@ Type Type_id::get_id() const{
     return this->id;
 }
 //---------------------------------------------------
+
+
+
+
+
 
 
 
@@ -166,10 +173,27 @@ void Ins_node::execute(){
 //-------------------------------------------------------------------
 
 
+
+
+
+
+
+
+
+
+
 //Nodo para cuerpo de un scope----------------------------------------
 Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b)
 : body(std::move(b)){}
 //--------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 //Nodo para cuerpo de un scope----------------------------------------
@@ -182,6 +206,13 @@ void Body_node::execute(){
         stmt->execute();
 }
 //--------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
@@ -199,6 +230,10 @@ void If_node::execute(){
 
 }
 //---------------------------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -226,6 +261,38 @@ void Print_node::execute() {
     }, this->v);
 }
 //---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+//lectura de constantes y variables-----------------------------------
+Const_node::Const_node(Type t, Value v)
+    : t(t), v(v) {}
+    
+Type Const_node::get_type() const {
+    return this->t;
+}
+Value Const_node::get_value() const {
+    return this->v;
+}
+
+
+Var_node::Var_node(std::string name, Symbol_table* table)
+    : name(name), table(table){}
+    
+Type Var_node::get_type() const {
+    return this->table->get(this->name)->get_type();
+}
+Value Var_node::get_value() const {
+    return this->table->get(this->name)->get_value();
+}
+
+//----------------------------------------------------------------------------
 
 
 

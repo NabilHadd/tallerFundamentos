@@ -95,6 +95,7 @@ union YYSTYPE
 {
 #line 19 "parser.y"
 
+    Expr_node* expr_
     std::vector<Statment_node*>* stmts_;
     Statment_node*  stmt_;
     Body_holder_node*      body_holder_;
@@ -109,7 +110,7 @@ union YYSTYPE
     bool            bool_;
     char*           str_;
 
-#line 113 "parser.hpp"
+#line 114 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

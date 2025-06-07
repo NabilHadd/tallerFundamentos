@@ -1,13 +1,12 @@
 #include <memory>
 #include <stdio.h>
 #include <vector>
-#include <set>
 #include <stack>
 #include "Symbol_base.h"
 #include "Symbol_table.h"
 #include "utils.h"
 
-
+//Clases base-------------------------------------------------------------
 class Logic_op {//clase para identificar el tipo de operacion logica
 private:
     Logic op;
@@ -46,6 +45,31 @@ class Statment_node : public Node { //nodo statment, almacena una instruccion
 };
 
 
+class Expr_node {
+public:
+    virtual ~Expr_node() = default;
+    virtual Value get_value() const = 0;
+    virtual Type get_Type() const = 0;
+     
+};
+
+//------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Clases statment--------------------------------------------------------------------------
 
 class Body_node : public Statment_node {
 std::vector<std::unique_ptr<Statment_node>> body;
@@ -88,6 +112,21 @@ public:
     
     void execute() override;
 };
+//---------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Declaracion e instancia-----------------------------------------------------------------------------------------------
@@ -129,6 +168,42 @@ public:
     
 };
 //----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+//Clases para expresiones---------------------------------------------------------------------------------------------
+
+class Const_node : public Expr_node {
+private:
+    Type t;
+    Value v;
+public:
+    Const_node(Type t, Value v);
+    
+    Type get_type() const override;
+    Value get_value() const override;
+    
+};
+
+class Var_node : public Expr_node {
+private:
+    std::string name;
+    Symbol_table* table;
+public:
+    Var_node(std::string name, Symbol_table* table);
+    
+    Type get_type() const override;
+    Value get_value() const override;
+};
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
