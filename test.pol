@@ -1,6 +1,2 @@
-if(true){cout("hola")
-    if(false){cout("hola1")
-cout("hola3")
-}
-}
-cout("hola2")
+int a = 3
+cout(a)

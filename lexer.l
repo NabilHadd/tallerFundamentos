@@ -12,8 +12,10 @@ extern int yylineno;
 %%
 -?[0-9]+(\.[0-9]+)?         { yylval.num_ = atof(yytext); 
                               return NUM; }
-(true|false)                {  yylval.bool_ = strdup(yytext);
-                              return V_BOOL;}
+"true"                      { yylval.bool_ = strdup(yytext);
+                              return T_BOOL;}
+"false"                     { yylval.bool_ = strdup(yytext);
+                              return F_BOOL;}
 "if"                        { return IF;}
 "int"                       { return INT;}
 "bool"                      { return BOOL;}

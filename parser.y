@@ -35,7 +35,8 @@ std::set<Statment_node*> global_body_cache;
 %token  <num_>      NUM
 %token  <str_>      VAR
 %token  <str_>      STRING
-%token  <bool_>     V_BOOL
+%token  <bool_>     T_BOOL
+%token  <bool_>     F_BOOL
 
 %type   <var_>      exp
 %type   <l_op_>     L_op
@@ -110,8 +111,11 @@ exp:
     NUM                     { 
         $$ = new Symbol_base(Type::TYPE_DOUBLE, $1);                
     }
-    |V_BOOL                 {
-        $$ = new Symbol_base(Type::TYPE_BOOL, $1);    
+    |T_BOOL                 {
+        $$ = new Symbol_base(Type::TYPE_BOOL, true);    
+    }
+    |F_BOOL                 {
+        $$ = new Symbol_base(Type::TYPE_BOOL, false);
     }
     |STRING                 {
         $$ = new Symbol_base(Type::TYPE_STRING, $1);
