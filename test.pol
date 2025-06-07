@@ -1,3 +1,3 @@
 int a = 1
 double b = 2
-cout(a b+ b *)
+cout(a b/ b a* +)
