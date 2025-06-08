@@ -1,7 +1,7 @@
 #include <memory>
 #include <stdio.h>
 #include <vector>
-#include <stack>
+#include <cmath>
 #include "Symbol_base.h"
 #include "Symbol_table.h"
 #include "utils.h"
@@ -107,12 +107,32 @@ class If_else_node : public Statment_node{
     std::vector<std::unique_ptr<Statment_node>> body;
     std::unique_ptr<Statment_node> branch;
 public:
-    If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>> body, std::unique_ptr<Statment_node> branch);
+    If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body, std::unique_ptr<Statment_node> branch);
     
     void execute () override;
 };
 
 
+class If_else_scope_node : public Statment_node{
+    Expr_node* cond;
+    std::vector<std::unique_ptr<Statment_node>> body;
+    std::vector<std::unique_ptr<Statment_node>> branch;
+public:
+    If_else_scope_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body, std::vector<std::unique_ptr<Statment_node>>&& branch);
+    
+    void execute () override;
+};
+
+class While_node : public Statment_node{
+
+    Expr_node* cond;
+    std::vector<std::unique_ptr<Statment_node>> body;
+
+public:
+    While_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body);
+        
+    void execute() override;
+};
 
 class Print_node : public Statment_node{
 private:
@@ -259,6 +279,17 @@ private:
 
 public:
     Sub_node(Expr_node* exp1, Expr_node* exp2);
+    Type get_type() const override;
+    Value get_value() const override;
+};
+
+class Pow_node : public Expr_node{
+private:
+    Expr_node* exp1;
+    Expr_node* exp2;
+
+public:
+    Pow_node(Expr_node* exp1, Expr_node* exp2);
     Type get_type() const override;
     Value get_value() const override;
 };

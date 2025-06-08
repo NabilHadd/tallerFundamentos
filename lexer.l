@@ -17,6 +17,8 @@ extern int yylineno;
 "false"                     { yylval.bool_ = strdup(yytext);
                               return F_BOOL;}
 "if"                        { return IF;}
+"else"                      { return ELSE;}
+"while"                     { return WHILE;}
 "int"                       { return INT;}
 "bool"                      { return BOOL;}
 "double"                    { return DOUBLE;}

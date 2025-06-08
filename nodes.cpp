@@ -2,7 +2,7 @@
 
 
 
-Type type_cheq(Type t1, Type t2, char* msg){
+Type type_cheq(Type t1, Type t2, std::string msg){
     if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
         return t1;    
     }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
@@ -12,7 +12,8 @@ Type type_cheq(Type t1, Type t2, char* msg){
     }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
         return t1;    
     }else{
-        yyerror(msg);
+        const char* cmsg = msg.c_str();
+        yyerror(cmsg);
         return Type::TYPE_INT;    
     }
 }
@@ -260,10 +261,10 @@ void If_node::execute(){
 
 
 //Nodo para else if statment, no scope--------------------------------------------------------
-If_else_node::If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>> body, std::unique_ptr<Statment_node> branch){
+If_else_node::If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body, std::unique_ptr<Statment_node> branch){
     this->cond = cond;
-    this->body = body;
-    this->branch = branch;
+    this->body = std::move(body);
+    this->branch = std::move(branch);
 }
     
 void If_else_node::execute () {
@@ -280,6 +281,50 @@ void If_else_node::execute () {
 //---------------------------------------------------------------------------------------------
 
 
+
+
+//Nodo para else if con scope-----------------------------------------------------------------------
+
+If_else_scope_node::If_else_scope_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body, std::vector<std::unique_ptr<Statment_node>>&& branch){
+    this->cond = cond;
+    this->body = std::move(body);
+    this->branch = std::move(branch);
+}
+    
+void If_else_scope_node::execute () {
+    bool condition = eval(this->cond->get_value());
+
+    if (condition){
+        for(auto& stmt : this->body)
+        stmt->execute();
+    }else{
+        for(auto& stmt : this->branch)
+        stmt->execute();
+    }
+}
+
+
+//--------------------------------------------------------------------------------------------------
+
+
+
+
+//Nodo para el while-----------------------------------------------------------------------------------------------
+
+While_node::While_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body)
+: cond(cond), body(std::move(body)){}
+
+void While_node::execute(){
+    bool condition = eval(this->cond->get_value());
+
+    while(condition){
+        for(auto& stmt : this->body)
+            stmt->execute();
+        condition = eval(this->cond->get_value());
+    }
+
+}
+//------------------------------------------------------------------------------------------------
 
 
 //Nodo para print-----------------------------------------------
@@ -587,6 +632,62 @@ Value Sub_node::get_value()const{
 }
 
 //-------------------------------------------------------------------------------------
+
+
+
+
+
+//Nodo para elevar----------------------------------------------------------------------
+
+Pow_node::Pow_node(Expr_node* exp1, Expr_node* exp2){
+    this->exp1 = exp1;
+    this->exp2 = exp2;
+}
+
+Type Pow_node::get_type()const{
+    Type t1 = this->exp1->get_type();
+    Type t2 = this->exp2->get_type();
+    
+    return type_cheq(t1, t2, "chequeo de tipos incompatibles para potencia");
+}
+
+Value Pow_node::get_value()const{
+    Type t1 = this->exp1->get_type();
+    Type t2 = this->exp2->get_type();
+    Value v1 = this->exp1->get_value();
+    Value v2 = this->exp2->get_value();
+
+    if (t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
+        int a = std::get<int>(v1);
+        int b = std::get<int>(v2);
+        int res = pow(a, b);
+        return res;
+
+    } else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_INT){
+        double a = std::get<double>(v1);
+        int b = std::get<int>(v2);
+        double res = pow(a, b);
+        return res;
+
+    }else if(t2 == Type::TYPE_DOUBLE && t1 == Type::TYPE_INT){
+        int a = std::get<int>(v1);
+        double b = std::get<double>(v2);
+        double res = pow(a, b);
+        return res;
+
+    }else if(t1 == Type::TYPE_DOUBLE && t2 == Type::TYPE_DOUBLE){
+        double a = std::get<double>(v1);
+        double b = std::get<double>(v2);
+        double res = pow(a, b);
+        return res;
+    }else{
+        yyerror("tipos incompatibles para potencia");
+        return 0;
+    }
+}
+
+//--------------------------------------------------------------------------------------
+
 
 
 

@@ -1,8 +1,6 @@
 %{
 #include <iostream>
 #include <stdio.h>
-#include <math.h>
-#include <set>
 #include "Symbol_table.h"
 #include "utils.h"
 #include "nodes.h"
@@ -10,8 +8,7 @@
 extern int          yylex();
 extern int          yylineno;
 Symbol_table        table;
-Body_node           program;
-std::set<Statment_node*> global_body_cache;
+Body_node           program;//hay que limpiarlo con delete despues para borrar cada nodo vdd????
 
 %}
 
@@ -50,7 +47,7 @@ std::set<Statment_node*> global_body_cache;
 
 %token INIT INT DOUBLE BOOL STR
 %token PRINT
-%token IF ELIF ELSE WHILE
+%token IF ELSE WHILE
 //cambio de "token a nonasoc, deberia ser lo mismo"
 %nonassoc ADD SUB MUL DIV POW INCP POSTINC
 %nonassoc EQ GR WR EQ_GR EQ_WR
@@ -94,6 +91,18 @@ line_non_empty:
     | IF LPAREN exp RPAREN scope ELSE line_non_empty    {
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new If_else_node($3, std::move(body_holder->body), std::unique_ptr<Statment_node>($7));
+        delete body_holder;
+    }
+    | IF LPAREN exp RPAREN scope ELSE scope  {
+        auto body_holder = dynamic_cast<Body_holder_node*>($5);
+        auto branch_holder = dynamic_cast<Body_holder_node*>($7);
+        $$ = new If_else_scope_node($3, std::move(body_holder->body), std::move(branch_holder->body));
+        delete body_holder;
+        delete branch_holder;
+    }
+    | WHILE LPAREN exp RPAREN scope  {
+        auto body_holder = dynamic_cast<Body_holder_node*>($5);
+        $$ = new While_node($3, std::move(body_holder->body));
         delete body_holder;
     }
     | PRINT LPAREN exp RPAREN ';'      {
@@ -147,7 +156,10 @@ exp:
 
         $$ = new Div_node($1, $2);
     }
-    //| exp exp POW           { $$ = pow($1, $2); }
+    | exp exp POW           { 
+
+        $$ = new Pow_node($1, $2); 
+    }
     //| exp INCP              { $$ = ++$1; }
     //| exp POSTINC           { $$ = $1++; }
     ;
