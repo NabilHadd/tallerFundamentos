@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 #include <stdio.h>
 #include <vector>
@@ -141,6 +142,17 @@ public:
     Print_node(Expr_node* exp);
     
     void execute() override;
+};
+
+class Scan_node : public Statmemt_node{
+private:
+    std::string name;
+    Symbol_table* table;
+public:
+    Scan_node(const std::string& name, Symbol_table* table);
+
+    void execute() override;
+
 };
 //---------------------------------------------------------------------------------------------------------------------------
 
@@ -294,6 +306,18 @@ public:
     Value get_value() const override;
 };
 
+class Not_node: public Expr_node{
+private:
+    Expr_node* exp1;
+
+public:
+    Not_node(Expr_node* exp1);
+    
+    Type get_type() const override;
+    
+    Value get_value() const override;
+    
+};
 class Logic_node : public Expr_node {
 private:
     Expr_node* exp1;

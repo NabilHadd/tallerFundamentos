@@ -8,7 +8,9 @@ enum class Logic {
     IS_GR,
     IS_WR,
     IS_EQ_GR,
-    IS_EQ_WR
+    IS_EQ_WR,
+    OR_,
+    AND_
 };
 
 //void print_value(Value v);

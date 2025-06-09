@@ -1,0 +1,12 @@
+double num = 3.65587;   este numero se debe escanear
+int n = 3;              este numero se debe escaear
+
+
+num = num 10 n 1+ ** *;
+
+num = num 5 +;
+
+int aux_num = num 10 /;
+
+
+cout(aux_num 10 n** /);

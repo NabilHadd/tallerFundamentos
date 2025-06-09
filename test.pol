@@ -1,7 +1,7 @@
-double num = 304;
+double num = 305;
 int aux_num = num 10/;
 
-int a = 0;
+int a = 1;
 int b = 10;
 int c = 2;
 
@@ -9,11 +9,11 @@ cout(b c**);
 
 aux_num = aux_num 10*;
 
-if(num aux_num- 5 >=){
+if(num aux_num- 5 >= not){
     cout("redondear para arriba");
     int b = 5;
     cout("hola " b b* +);
-}else if (false){
+}else if (false not){
     cout("hola" " " + a +);
     cout("tsha la mea vola el won maquina");
 }else{
@@ -21,7 +21,7 @@ if(num aux_num- 5 >=){
 }
 cout(aux_num);
 
-while(a b <){
+while(a not true <){
     cout("hola");
     a = a 1+;
 }

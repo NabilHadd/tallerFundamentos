@@ -5,3 +5,14 @@ El lenguaje usara un unordered_map para el manejo de variables
     -las variables no poseen nombre, debido a que este lo maneja el hashmap 
      acceder a ella nada mas.
 Se define la clase symbol que describe una variable de cualquier tipo, luego, en funcion del tipo se instanciara un obejto de la clase symbol_tipo, y en el constructor de esta clase secundaria es donde se llevara a cabo la insercion en el hashmap.
+
+
+El lenguaje funciona por nodos, donde todo se acumula en un vector con los nodos recopilados a lo largo de todo el codigo.
+Cada instruccion es un nodo, al final del todo se ejecuta uno por uno cada uno de los nodos recopilados.
+Debido a que cada nodo es al fin y al cabo un objeto que se construye durante el parseo, la obtencion de los valores para cada variable
+se tuvo que hacer dentro de cada get (explicar con mayor detalle), pq si se obtenian durante la construccion, era equivalente a obtenerlo durante el parseo, pero durante el parseo solo se recopilan los nodos (instrucciones) no se ejecuta nada, por lo que las operaciones de cualquier tipo, se estarian ejecutando antes de que incluso se almacenaran las variables en el hashmap.
+lo cual genera un error.
+
+Todo funciona de tal manera que el flujo de ejecucion se puede dividir en dos principales partes-> Parseo y ejecucion de los statments.
+
+El lenguaje es stackfriendly. Si bien el lenguaje es traducido a c, que no posee notacion postfija, todas las operaciones aritmeticas habran sido escritas de manera que amigable con la pila. Esto debido a que al ser postfijo el orden de todas las operaciones, se deriva al humano la tarea de eliminar la prioridad entre estas y no a la maquina por medio de uso de parentesis.

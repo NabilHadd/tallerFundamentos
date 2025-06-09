@@ -327,6 +327,12 @@ void While_node::execute(){
 //------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+
+
 //Nodo para print-----------------------------------------------
 Print_node::Print_node(Expr_node* exp){
     this->exp = exp;
@@ -350,6 +356,26 @@ void Print_node::execute() {
 }
 //---------------------------------------------------------------
 
+
+
+
+
+
+
+
+
+//Nodo para scan-------------------------------------------------
+Scan_node::Scan_node(const std::string& name, Symbol_table* table){
+    this->name = name;
+    this->table = table;
+}
+
+void Scan_node::execute() {
+    std::string value;
+    cin >> value;
+    this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_STRING, value)); 
+}
+//--------------------------------------------------------------
 
 
 
@@ -688,7 +714,19 @@ Value Pow_node::get_value()const{
 
 //--------------------------------------------------------------------------------------
 
+//Nodo para el not----------------------------------------------------------------------
+Not_node::Not_node(Expr_node* exp1){
+    this->exp1 = exp1;
+}
 
+Type Not_node::get_type()const{return Type::TYPE_BOOL;}
+
+Value Not_node::get_value() const {
+    Value v1 = this->exp1->get_value();
+    
+    return (not eval(v1));
+}
+//--------------------------------------------------------------------------------------
 
 
 //Nodo para las operaciones logicas--------------------------------------------------------
@@ -721,11 +759,29 @@ Value Logic_node::get_value()const{//Hacer chequeo de tipos muchisimo mas exhaus
             }else if(this->op == Logic::IS_EQ_WR){
                 (a <= b) ? v = true : v = false;
             }
+        }else if constexpr ((std::is_same_v<A, int> and std::is_same_v<B, double>) or (std::is_same_v<A, double> and std::is_same_v<B, int>)){
+            if(this->op == Logic::IS_EQ){
+                (a == b) ? v = true : v = false;
+            }else if(this->op == Logic::IS_GR){
+                (a > b) ?  v = true : v = false;
+            }else if(this->op == Logic::IS_WR){
+                (a < b) ?  v = true : v = false;
+            }else if(this->op == Logic::IS_EQ_GR){
+                (a >= b) ? v = true : v = false;
+            }else if(this->op == Logic::IS_EQ_WR){
+                (a <= b) ? v = true : v = false;
+            }
         }else{
             yyerror("tipos incompatibles para comparacion");
         }
 
     }, v1, v2);
+    if(this->op == Logic::OR_){
+        v = (eval(v1) or eval(v2));    
+    }else if(this->op == Logic::AND_){
+        v = (eval(v1) and eval(v2));    
+    }
+
     return v;
 }
 

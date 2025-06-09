@@ -14,28 +14,34 @@ Body_node           program;//hay que limpiarlo con delete despues para borrar c
 
 
 %union {
-    Expr_node* expr_;
-    std::vector<Statment_node*>* stmts_;
-    Statment_node*  stmt_;
-    Body_holder_node*      body_holder_;
-    Body_node*  body_;       
+    //Retorno de producciones.
+    std::vector<Statment_node*>*    stmts_;
+    Statment_node*                  stmt_;      
+    Expr_node*                      expr_;
 
-    Type_id*        type_;
-    Logic_op*       l_op_;
+    //Generalizaciones.
+    Type_id*                        type_;
+    Logic_op*                       l_op_;
 
-    Symbol_base*    var_;
+    //Auxiliares.
+    Body_holder_node*               body_holder_;
+    Symbol_base*                    var_;
+    Body_node*                      body_; 
 
-    double          num_;
-    bool            bool_;
-    char*           str_;
+    //Tipos de datos.
+    double                          num_;
+    bool                            bool_;
+    char*                           str_;
 }
 
+//Tokens para lectura de valores crudos.
 %token  <num_>      NUM
 %token  <str_>      VAR
 %token  <str_>      STRING
 %token  <bool_>     T_BOOL
 %token  <bool_>     F_BOOL
 
+//Tipos de dato en producciones.
 %type   <expr_>      exp
 %type   <l_op_>     L_op
 %type   <type_>     type_id
@@ -44,22 +50,28 @@ Body_node           program;//hay que limpiarlo con delete despues para borrar c
 %type   <stmts_>    scoped_lines
 
 
-
+//Tokens para declaracion e inicializacion.
 %token INIT INT DOUBLE BOOL STR
-%token PRINT
-%token IF ELSE WHILE
-//cambio de "token a nonasoc, deberia ser lo mismo"
+
+//Tokens para statments
+%token IF ELSE WHILE PRINT SCAN
+
+//Operadores aritmeticos
 %nonassoc ADD SUB MUL DIV POW INCP POSTINC
-%nonassoc EQ GR WR EQ_GR EQ_WR
-%nonassoc LPAREN
-%nonassoc RPAREN
-%nonassoc LBRACE
-%nonassoc RBRACE
+
+//Operadores logicos
+%nonassoc EQ GR WR EQ_GR EQ_WR OR AND NOT
+
+//parentesis.
+%nonassoc LPAREN RPAREN
+
+//llaves.
+%nonassoc LBRACE RBRACE
 
 
 
 %%
-
+//Producciones
 
 
 input: 
@@ -109,6 +121,9 @@ line_non_empty:
         $$ = new Print_node($3);
 
     }
+    | SCAN LPAREN VAR RPAREN ';'        {
+        $$ = new Scan_node($3, &table);    
+    }
     ;
 
 
@@ -141,6 +156,9 @@ exp:
     | exp exp L_op {
         $$ = new Logic_node($1, $2, $3);
     }
+    | exp NOT {
+        $$ = new Not_node($1);    
+    }
     | exp exp ADD           {
         $$  = new Add_node($1, $2);
     }
@@ -170,12 +188,21 @@ L_op:
     } 
     | GR {
         $$ = new Logic_op(Logic::IS_GR);
-    } | WR {
+    } 
+    | WR {
         $$ = new Logic_op(Logic::IS_WR);
-    } | EQ_GR {
+    } 
+    | EQ_GR {
         $$ = new Logic_op(Logic::IS_EQ_GR);
-    } | EQ_WR {
+    } 
+    | EQ_WR {
         $$ = new Logic_op(Logic::IS_EQ_WR);
+    }
+    | AND {
+        $$ = new Logic_op(Logic::AND_);
+    }
+    | OR    {
+        $$ = new Logic_op(Logic::OR_);
     }
     ;
 

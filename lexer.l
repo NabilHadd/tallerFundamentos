@@ -24,6 +24,7 @@ extern int yylineno;
 "double"                    { return DOUBLE;}
 "string"                    { return STR;}
 "cout"                      { return PRINT;}
+"scan"                      { return SCAN;}
 "("                         { return LPAREN;}
 ")"                         { return RPAREN;}
 "{"                         { return LBRACE;}
@@ -35,6 +36,9 @@ extern int yylineno;
 "+"                         { return ADD; }
 "-"                         { return SUB; }
 "*"                         { return MUL; }
+"not"                       { return NOT;}
+"and"                       { return AND;}
+"or"                        { return OR;}
 "=="                        { return EQ;}
 ">"                         { return GR;}
 "<"                         { return WR;}
