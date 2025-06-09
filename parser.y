@@ -57,10 +57,10 @@ Body_node           program;//hay que limpiarlo con delete despues para borrar c
 %token IF ELSE WHILE PRINT SCAN
 
 //Operadores aritmeticos
-%nonassoc ADD SUB MUL DIV POW INCP POSTINC
+%nonassoc ADD SUB MUL DIV POW INCP POSTINC 
 
 //Operadores logicos
-%nonassoc EQ GR WR EQ_GR EQ_WR OR AND NOT
+%nonassoc EQ GR WR EQ_GR EQ_WR OR AND NOT PARSE
 
 //parentesis.
 %nonassoc LPAREN RPAREN
@@ -149,6 +149,9 @@ exp:
     }
     |STRING                 {
         $$ = new Const_node(Type::TYPE_STRING, $1);
+    }
+    | exp PARSE type_id     {
+        $$ = new Parse_node($3, $1);    
     }
     | VAR                   { 
         $$ = new Var_node($1, &table);
@@ -239,6 +242,30 @@ scope:
     ;
 
 %%
+
+bool try_parse_s(const std::string& input, Type t){
+    Value out_val;
+    try{
+        if(t ==Type::TYPE_INT){
+            out_val = std::stoi(input);
+        }else if(t==Type::TYPE_DOUBLE){
+            out_val = std::stod(input);
+        }else if(t==Type::TYPE_BOOL){
+            return true;
+        }else if(t==Type::TYPE_STRING){
+            out_val = input;
+        }else{
+            return false;
+        }
+        return true;
+    }catch(const std::invalid_argument& e){
+        return false;
+    }catch(const std::out_of_range& e){
+        return false;    
+    }
+    
+
+}
 
 bool eval(Value v){
 

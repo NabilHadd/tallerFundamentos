@@ -21,7 +21,9 @@ if(num aux_num- 5 >= not){
 }
 cout(aux_num);
 
-while(a not true <){
+while(a 10 <){
     cout("hola");
     a = a 1+;
 }
+int d = 3;
+cout(c d * 2** 100 - -> bool not false or "hola" +);

@@ -17,6 +17,7 @@ enum class Logic {
 bool eval(Value v);
 std::string to_string_value(Type t, const Value& v);
 int yyerror(const char* s);
+bool try_parse_s(const std::string& input, Type t);
 
 
 

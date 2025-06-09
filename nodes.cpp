@@ -372,7 +372,7 @@ Scan_node::Scan_node(const std::string& name, Symbol_table* table){
 
 void Scan_node::execute() {
     std::string value;
-    cin >> value;
+    std::cin >> value;
     this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_STRING, value)); 
 }
 //--------------------------------------------------------------
@@ -397,6 +397,8 @@ Value Const_node::get_value() const {
     return this->v;
 }
 
+
+
 Var_node::Var_node(std::string name, Symbol_table* table){
     this->name = name;
     this->table = table;
@@ -408,7 +410,87 @@ Type Var_node::get_type() const {
 Value Var_node::get_value() const {
     return this->table->get(this->name)->get_value();
 }
+
 //----------------------------------------------------------------------------
+
+
+
+
+//Nodo para el parseo---------------------------------------------------------
+
+Parse_node::Parse_node(Type_id* t, Expr_node* exp){
+    this->targ_t = t;
+    this->exp = exp;
+}
+
+Type Parse_node::get_type() const {
+    return this->targ_t->get_id();
+}
+
+Value Parse_node::get_value() const {
+    Type id = this->targ_t->get_id();
+    Type t = this->exp->get_type();
+    Value v = this->exp->get_value();   
+    Value res;
+
+    std::visit([&](auto&& a){
+    using T = std::decay_t<decltype(a)>;
+    if constexpr (std::is_same_v<T, int>){
+
+        if (id == Type::TYPE_INT)
+            res = a;
+        else if(id == Type::TYPE_DOUBLE)
+            res = static_cast<double>(a);
+        else if(id == Type::TYPE_BOOL)
+            res = eval(a);
+        else if(id == Type::TYPE_STRING){
+            res = std::to_string(a);
+        }
+
+    }else if constexpr (std::is_same_v<T, double>){
+
+        if (id == Type::TYPE_INT)
+            res = static_cast<int>(a);
+        else if(id == Type::TYPE_DOUBLE)
+            res = a;
+        else if(id == Type::TYPE_BOOL)
+            res = eval(a);
+        else if(id == Type::TYPE_STRING){
+            res = std::to_string(a);
+        }
+
+    }else if constexpr (std::is_same_v<T, bool>){
+
+        if (id == Type::TYPE_INT)
+            a ? (res = 1):(res = 0);
+        else if(id == Type::TYPE_DOUBLE)
+            a ? (res = 1.0):(res = 0.0);
+        else if(id == Type::TYPE_BOOL)
+            res = eval(a);
+        else if(id == Type::TYPE_STRING){
+            a ? (res = "true"):(res = "false");
+        }
+
+    }else if constexpr (std::is_same_v<T, std::string>){
+            
+        if (id == Type::TYPE_INT)
+            try_parse_s(a, id) ? (res = std::stoi(a)):(yyerror("String incompatible para int"));
+        else if(id == Type::TYPE_DOUBLE)
+            try_parse_s(a, id) ? (res = std::stod(a)):(yyerror("String incompatible para double"));
+        else if(id == Type::TYPE_BOOL)
+            res = eval(a);
+        else if(id == Type::TYPE_STRING){
+            res = a;
+        }
+        
+    }        
+          
+    }, v);  
+    return res;
+}
+
+
+//-----------------------------------------------------------------------------
 
 
 
@@ -493,7 +575,23 @@ Value Add_node::get_value()const{
         return res;
 
     }else if(t2 == Type::TYPE_STRING){
-        Value res = 0;
+        Value res;
+        std::string a = std::get<std::string>(v2);
+
+        std::visit([&](auto&& b) {//visit prueba con todas las combinaciones posibles para a y b
+            std::string str_val;
+            using B = std::decay_t<decltype(b)>; 
+   
+            if constexpr (std::is_same_v<B, std::string>) {
+                str_val = b;
+            }else if constexpr (std::is_same_v<B, bool>){                   
+                str_val = b ? "true" : "false";
+            }else{
+                str_val = std::to_string(b);
+            }
+            res = str_val + a;                
+        }, v1);
+
         return res;    
     }else{
         yyerror("tipos incompatibles para suma");

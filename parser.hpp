@@ -84,10 +84,11 @@ extern int yydebug;
     OR = 285,                      /* OR  */
     AND = 286,                     /* AND  */
     NOT = 287,                     /* NOT  */
-    LPAREN = 288,                  /* LPAREN  */
-    RPAREN = 289,                  /* RPAREN  */
-    LBRACE = 290,                  /* LBRACE  */
-    RBRACE = 291                   /* RBRACE  */
+    PARSE = 288,                   /* PARSE  */
+    LPAREN = 289,                  /* LPAREN  */
+    RPAREN = 290,                  /* RPAREN  */
+    LBRACE = 291,                  /* LBRACE  */
+    RBRACE = 292                   /* RBRACE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -117,7 +118,7 @@ union YYSTYPE
     bool                            bool_;
     char*                           str_;
 
-#line 121 "parser.hpp"
+#line 122 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

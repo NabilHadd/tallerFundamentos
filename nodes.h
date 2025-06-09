@@ -144,7 +144,7 @@ public:
     void execute() override;
 };
 
-class Scan_node : public Statmemt_node{
+class Scan_node : public Statment_node{
 private:
     std::string name;
     Symbol_table* table;
@@ -236,6 +236,18 @@ public:
     
     Type get_type() const override;
     Value get_value() const override;   
+};
+
+class Parse_node : public Expr_node {
+private:
+    Type_id* targ_t;
+    Expr_node* exp;
+public: 
+    Parse_node(Type_id* t, Expr_node* exp);
+    
+    Type get_type() const override;
+    Value get_value() const override;
+    
 };
 
 
