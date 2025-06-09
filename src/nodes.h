@@ -148,6 +148,7 @@ class Scan_node : public Statment_node{
 private:
     std::string name;
     Symbol_table* table;
+    std::string value;
 public:
     Scan_node(const std::string& name, Symbol_table* table);
 

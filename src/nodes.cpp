@@ -366,14 +366,13 @@ void Print_node::execute() {
 
 //Nodo para scan-------------------------------------------------
 Scan_node::Scan_node(const std::string& name, Symbol_table* table){
+    scanf("%s", this->value);
     this->name = name;
     this->table = table;
 }
 
 void Scan_node::execute() {
-    std::string value;
-    std::cin >> value;
-    this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_STRING, value)); 
+    this->table->update(this->name, std::make_unique<Symbol_base>(Type::TYPE_STRING, this->value)); 
 }
 //--------------------------------------------------------------
 

@@ -25,6 +25,7 @@ extern int yylineno;
 "string"                    { return STR;}
 "->"                        { return PARSE;}
 "cout"                      { return PRINT;}
+"cin"                       { return SCAN;}
 "scan"                      { return SCAN;}
 "("                         { return LPAREN;}
 ")"                         { return RPAREN;}
