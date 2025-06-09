@@ -1,0 +1,9 @@
+string a;
+cin(a);
+
+double b = a -> double;
+
+double c = b 2**;
+cout(c);
+
+cout("hola");

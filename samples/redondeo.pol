@@ -1,5 +1,5 @@
-double num = 3.65587;   este numero se debe escanear
-int n = 3;              este numero se debe escaear
+double num = 3.65587;
+int n = 3;
 
 
 num = num 10 n 1+ ** *;

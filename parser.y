@@ -1,5 +1,6 @@
 %{
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include "Symbol_table.h"
 #include "utils.h"
@@ -299,10 +300,25 @@ int yyerror(const char* s){
 }
 
 
-int main(void) {
+int main(int argc, char* argv[]){
+    if(argc < 2){
+        std::cerr << "Uso: " << argv[0] << " archivo.pol" << std::endl;
+        return 1;
+    }
+    
+    FILE* file = fopen(argv[1], "r");
+    if(!file){
+        std::cerr << "No se pudo abrir el archivo: " << argv[1] << std::endl;
+        return 1;   
+    }
+
+    extern FILE* yyin;
+    yyin = file;
+
     yyparse();
     program.execute();
     table.clean_table();
+    fclose(file);
     return 0;
 }
 

@@ -1,6 +1,3 @@
-string entrada;
-cin(entrada);
-cout(entrada);
 double num = 305;
 int aux_num = num 10/;
 
