@@ -1,5 +1,14 @@
-double num = 3.65587;
-int n = 3;
+string input;
+
+cout("Indique el numero que desea redondear: ");
+cin(input);
+
+double num = input -> double;
+
+cout("Indique cuantos decimales desea: ");
+cin(input);
+
+int n = input -> int;
 
 
 num = num 10 n 1+ ** *;

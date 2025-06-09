@@ -1,0 +1,14 @@
+int a = 0;
+int b = 5;
+
+while(a 5 <){
+    
+    cout("while 1");
+    while(b 0 >){
+        cout("while 2");
+        b = b 1-;    
+    }
+    a = a 1+;
+}
+
+cout("while dentro de while funciona");
