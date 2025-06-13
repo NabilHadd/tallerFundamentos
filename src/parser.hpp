@@ -84,7 +84,7 @@ extern int yydebug;
     OR = 285,                      /* OR  */
     AND = 286,                     /* AND  */
     NOT = 287,                     /* NOT  */
-    PARSE = 288,                   /* PARSE  */
+    ARROW = 288,                   /* ARROW  */
     LPAREN = 289,                  /* LPAREN  */
     RPAREN = 290,                  /* RPAREN  */
     LBRACE = 291,                  /* LBRACE  */
@@ -97,7 +97,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "parser.y"
+#line 19 "parser.y"
 
     //Retorno de producciones.
     std::vector<Statment_node*>*    stmts_;

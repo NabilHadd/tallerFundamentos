@@ -5,10 +5,12 @@
 #include "Symbol_table.h"
 #include "utils.h"
 #include "nodes.h"
+#include "Func_table.h"
 
 extern int          yylex();
 extern int          yylineno;
 Symbol_table        table;
+Func_table          f_table;
 Body_node           program;//hay que limpiarlo con delete despues para borrar cada nodo vdd????
 
 %}
@@ -61,7 +63,7 @@ Body_node           program;//hay que limpiarlo con delete despues para borrar c
 %nonassoc ADD SUB MUL DIV POW INCP POSTINC 
 
 //Operadores logicos
-%nonassoc EQ GR WR EQ_GR EQ_WR OR AND NOT PARSE
+%nonassoc EQ GR WR EQ_GR EQ_WR OR AND NOT ARROW
 
 //parentesis.
 %nonassoc LPAREN RPAREN
@@ -125,6 +127,13 @@ line_non_empty:
     | SCAN LPAREN VAR RPAREN ';'        {
         $$ = new Scan_node($3, &table);    
     }
+    | ARROW VAR LPAREN RPAREN scope {
+        auto body_holder = dynamic_cast<Body_holder_node*>($5);
+        $$ = new Dec_func_node($2, &f_table, std::move(body_holder->body));
+    }
+    | VAR LPAREN RPAREN{
+        $$ = new Execute_node($1, &f_table);
+    }
     ;
 
 
@@ -151,7 +160,7 @@ exp:
     |STRING                 {
         $$ = new Const_node(Type::TYPE_STRING, $1);
     }
-    | exp PARSE type_id     {
+    | exp ARROW type_id     {
         $$ = new Parse_node($3, $1);    
     }
     | VAR                   { 

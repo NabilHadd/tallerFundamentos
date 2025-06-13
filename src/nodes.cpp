@@ -54,6 +54,14 @@ Type Type_id::get_id() const{
 
 
 //Declarar, Declarar e istanciar , instaciar-------------------------
+Dec_func_node::Dec_func_node(const std::string&& name, Func_table* table, std::vector<std::unique_ptr<Statment_node>>&& body)
+:name(name), table(table), body(std::move(body)){}
+
+void Dec_func_node::execute() {
+    this->table->insert(this->name, std::make_unique<Body_node>(body));
+}
+
+
 Dec_node::Dec_node(Type t_id, const std::string& name, Symbol_table* table){
     this->t_id = t_id;
     this->name = name;
@@ -381,6 +389,21 @@ void Scan_node::execute() {
 
 
 
+
+
+//Nodo para la llamada de una funcion------------------------------------------
+Execute_node::Execute_node(const std::string& name, Func_table* table){
+    this->name = name;
+    this->table = table;
+}
+
+void Execute_node::execute() {
+    Body_node* body = table->get(name);
+
+    for(auto& stmt : body)
+        stmt->execute();
+}
+//-----------------------------------------------------------------------------
 
 
 

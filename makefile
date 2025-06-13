@@ -16,7 +16,8 @@ FLEX_SRC            = $(SRC_DIR)/lexer.cpp
 # Otros archivos fuente
 CPP_SRCS = $(SRC_DIR)/Symbol_base.cpp\
 $(SRC_DIR)/Symbol_table.cpp \
-$(SRC_DIR)/nodes.cpp
+$(SRC_DIR)/nodes.cpp\
+$(SRC_DIR)/Func_table.cpp
 
 # Compilador y flags
 CXX = g++

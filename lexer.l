@@ -23,7 +23,7 @@ extern int yylineno;
 "bool"                      { return BOOL;}
 "double"                    { return DOUBLE;}
 "string"                    { return STR;}
-"->"                        { return PARSE;}
+"->"                        { return ARROW;}
 "cout"                      { return PRINT;}
 "cin"                       { return SCAN;}
 "scan"                      { return SCAN;}

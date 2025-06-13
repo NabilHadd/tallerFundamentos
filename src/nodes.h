@@ -1,11 +1,7 @@
-#include <iostream>
-#include <memory>
-#include <stdio.h>
-#include <vector>
-#include <cmath>
 #include "Symbol_base.h"
 #include "Symbol_table.h"
 #include "utils.h"
+#include "Func_table.h"
 
 //Clases base-------------------------------------------------------------
 class Logic_op {//clase para identificar el tipo de operacion logica
@@ -20,6 +16,7 @@ public:
     ~Logic_op();
 };
 
+
 class Type_id {
 private:
     Type id;
@@ -33,25 +30,13 @@ public:
 
 
 
-class Node {
+
+class Body_holder_node {
 public:
-    virtual void execute() = 0; //nodo base, de aqui nacen todos los demas.
-    virtual ~Node() = default; 
-
-};
-
-
-
-class Statment_node : public Node { //nodo statment, almacena una instruccion
-};
-
-
-class Expr_node {
-public:
-    virtual Value get_value() const = 0;
-    virtual Type get_type() const = 0;
-    virtual ~Expr_node() = default;
-     
+    std::vector<std::unique_ptr<Statment_node>> body;
+    
+    Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b);
+    
 };
 
 //------------------------------------------------------------------------------------------
@@ -70,26 +55,7 @@ public:
 
 
 
-//Clases statment--------------------------------------------------------------------------
-
-class Body_node : public Statment_node {
-std::vector<std::unique_ptr<Statment_node>> body;
-
-public:
-    void add_statment(std::unique_ptr<Statment_node> stmt);
-    void execute() override;
-
-};
-
-
-class Body_holder_node {
-public:
-    std::vector<std::unique_ptr<Statment_node>> body;
-    
-    Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b);
-    
-};
-
+//Clases statment (funcionalidades basicas)-------------------------------------------------
 
 
 class If_node : public Statment_node{
@@ -154,6 +120,16 @@ public:
     void execute() override;
 
 };
+
+class Execute_node : public Statment_node{
+private:
+    std::string name;
+    Func_table* table;
+public:
+    Execute_node(const std::string& name, Func_table* table);
+
+    void execute() override;
+};
 //---------------------------------------------------------------------------------------------------------------------------
 
 
@@ -171,7 +147,20 @@ public:
 
 
 
-//Declaracion e instancia-----------------------------------------------------------------------------------------------
+//Declaracion e instancia de variables-----------------------------------------------------------------------------------------------
+class Dec_func_node : public Statment_node{
+private:
+    std::string name;//usar unique_ptr al guardar en la tabla
+    Func_table* table;
+    std::vector<std::unique_ptr<Statment_node>> body;
+
+public:
+    Dec_func_node(const std::string& name, Func_table* table, std::vector<std::unique_ptr<Statment_node>>&& body);
+    
+    void execute() override;
+};
+
+
 class Dec_node : public Statment_node{
 private:
     Type t_id;
@@ -208,6 +197,9 @@ public:
     
 };
 //----------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
@@ -253,6 +245,10 @@ public:
 
 
 //--------------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -341,5 +337,6 @@ public:
     Type get_type() const override;
     Value get_value() const override;
 };
+//-----------------------------------------------------------------
 
 
