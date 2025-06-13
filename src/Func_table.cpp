@@ -8,7 +8,7 @@ void Func_table::insert(const std::string& name, std::unique_ptr<Body_node> body
     if(has(name)){
         yyerror("ya existe la funcion");
     } else {
-        table.emplace(name, std::move(symbol));
+        table.emplace(name, std::move(body));
     }
 }
 

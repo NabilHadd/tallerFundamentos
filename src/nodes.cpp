@@ -1,14 +1,4 @@
 #include "nodes.h"
-In file included from /usr/include/c++/13/memory:78,
-                 from src/Symbol_table.h:5,
-                 from src/nodes.h:2,
-                 from src/nodes.cpp:1:
-/usr/include/c++/13/bits/unique_ptr.h: In instantiation of ‘std::__detail::__unique_ptr_t<_Tp> std::make_unique(_Args&& ...) [with _Tp = Body_node; _Args = {vector<unique_ptr<Statment_node, default_delete<Statment_node> >, allocator<unique_ptr<Statment_node, default_delete<Statment_node> > > >&}; __detail::__unique_ptr_t<_Tp> = __detail::__unique_ptr_t<Body_node>]’:
-src/nodes.cpp:61:64:   required from here
-/usr/include/c++/13/bits/unique_ptr.h:1070:30: error: no matching function for call to ‘Body_node::Body_node(std::vector<std::unique_ptr<Statment_node> >&)’
- 1070 |     { return unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...)); }
-      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 
 Type type_cheq(Type t1, Type t2, std::string msg){
@@ -237,6 +227,9 @@ Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&&
 
 
 //Nodo para cuerpo de un scope----------------------------------------
+Body_node::Body_node(std::vector<std::unique_ptr<Statment_node>>&& body)
+:body(std::move(body)){}
+
 void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
     body.push_back(std::move(stmt));
 }
