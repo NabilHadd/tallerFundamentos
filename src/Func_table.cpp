@@ -15,7 +15,7 @@ void Func_table::insert(const std::string& name, std::unique_ptr<Body_node> body
 void Func_table::update(const std::string& name, std::unique_ptr<Body_node> body){
     auto it  = table.find(name);
     if(it != table.end()){
-        it->second = std::move(symbol);//sera necesario usar el update???
+        it->second = std::move(body);//sera necesario usar el update???
     }
     
 }
