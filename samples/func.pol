@@ -1,0 +1,8 @@
+
+
+-> nabil(){
+    cout("hola esta es mi primera");
+    cout("funcion");
+}
+cout("gola");
+nabil()

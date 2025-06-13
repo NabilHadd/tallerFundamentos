@@ -35,10 +35,10 @@ void Func_table::print_table(){
         std::cout << key << " => "<< value << std::endl;
 }
 
-void Func_table::erase_symbol(const std::string& name){
+void Func_table::erase_func(const std::string& name){
     table.erase(name);
 }
 
-void Func::clean_table() {
+void Func_table::clean_table() {
     table.clear();    
 }

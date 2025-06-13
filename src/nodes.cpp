@@ -57,7 +57,7 @@ Dec_func_node::Dec_func_node(const std::string&& name, Func_table* table, std::v
 :name(name), table(table), body(std::move(body)){}
 
 void Dec_func_node::execute() {
-    this->table->insert(this->name, std::make_unique<Body_node>(body));
+    this->table->insert(this->name, std::make_unique<Body_node>(std::move(body)));
 }
 
 
