@@ -50,6 +50,7 @@ class Body_node : public Statment_node {
 std::vector<std::unique_ptr<Statment_node>> body;
 
 public:
+    std::vector<std::unique_ptr<Statment_node>> get();
     void add_statment(std::unique_ptr<Statment_node> stmt);
     void execute() override;
 

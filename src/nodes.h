@@ -155,7 +155,7 @@ private:
     std::vector<std::unique_ptr<Statment_node>> body;
 
 public:
-    Dec_func_node(const std::string& name, Func_table* table, std::vector<std::unique_ptr<Statment_node>>&& body);
+    Dec_func_node(const std::string&& name, Func_table* table, std::vector<std::unique_ptr<Statment_node>>&& body);
     
     void execute() override;
 };

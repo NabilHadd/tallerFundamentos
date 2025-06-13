@@ -232,6 +232,10 @@ void Body_node::add_statment(std::unique_ptr<Statment_node> stmt){
     body.push_back(std::move(stmt));
 }
 
+std::vector<std::unique_ptr<Statment_node>> Body_node::get(){
+    return this->body;
+}
+
 void Body_node::execute(){
     for (auto&& stmt : body)
         stmt->execute();
@@ -400,7 +404,7 @@ Execute_node::Execute_node(const std::string& name, Func_table* table){
 void Execute_node::execute() {
     Body_node* body = table->get(name);
 
-    for(auto& stmt : body)
+    for(auto& stmt : body->get())
         stmt->execute();
 }
 //-----------------------------------------------------------------------------
