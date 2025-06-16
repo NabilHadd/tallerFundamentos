@@ -1,0 +1,142 @@
+string input;
+
+double num1;
+double num2;
+double res;
+
+cout("Ingrese el numero de la operación que desea llevar a cabo:");
+cout("  Suma            -> 1");
+cout("  Resta           -> 2");
+cout("  Multiplicacion  -> 3");
+cout("  Division        -> 4");
+cout("  Potencia        -> 5");
+
+cin(input);
+
+int op_ = input -> int;
+
+
+-> calc(){
+    
+    if(op_ 1 ==){
+
+        cout("Ingrese el primer sumando: ");
+        cin(input);
+        num1 = input -> double;
+
+        cout("Ingrese el segundo sumando: ");
+        cin(input);
+        num2 = input -> double;
+
+        cout("");
+        cout("Resultado: " num1 num2 + +);
+        cout("");
+        cout("------------------------------------------");
+
+    }else if(op_ 2 ==){
+
+        cout("Ingrese el primer restando: ");
+        cin(input);
+        num1 = input -> double;
+
+        cout("Ingrese el segundo restando: ");
+        cin(input);
+        num2 = input -> double;
+        
+        cout("");
+        cout("Resultado: " num1 num2 - +);
+        cout("");
+        cout("------------------------------------------");
+
+    }else if(op_ 3 ==){
+
+        cout("Ingrese el primer factor: ");
+        cin(input);
+        num1 = input -> double;
+
+        cout("Ingrese el segundo factor: ");
+        cin(input);
+        num2 = input -> double;
+
+        cout("");
+        cout("Resultado: " num1 num2 * +);
+        cout("");
+        cout("------------------------------------------");
+
+    } else if(op_ 4 ==){
+
+        cout("Ingrese el primer dividendo: ");
+        cin(input);
+        num1 = input -> double;
+
+        cout("Ingrese el segundo dividendo: ");
+        cin(input);
+        num2 = input -> double;
+
+        cout("");
+        cout("Resultado: " num1 num2 / +);
+        cout("");
+        cout("------------------------------------------");
+
+    } else if(op_ 5 ==){
+
+        cout("Ingrese la base: ");
+        cin(input);
+        num1 = input -> double;
+
+        cout("Ingrese el exponente: ");
+        cin(input);
+        num2 = input -> double;
+
+        res = num1;
+
+        if(num2 0 >){
+
+            while(num2 1-){
+                res = res num1 *;
+                num2 = num2 1 -;
+            }
+
+        } else if(num2 0 <){
+            
+            while(num2 1-){
+                res = res num1 *;
+                num2 = num2 1 -;
+            }
+            res = 1 res /;
+
+        } else {
+
+            res = 1;        
+        }
+        cout("");
+        cout("Resultado: " res +);
+        cout("");
+        cout("------------------------------------------");
+
+    } else {
+        cout("Numero incompatible con operaciones.");
+    }
+
+}
+
+while(op_){
+   
+    calc();
+
+    cout("Ingrese el numero de la operación que desea llevar a cabo:");
+    cout("  Suma            -> 1");
+    cout("  Resta           -> 2");
+    cout("  Multiplicacion  -> 3");
+    cout("  Division        -> 4");
+    cout("  Potencia        -> 5");
+    cout(" ");
+    cout(" ");
+    cout("  EXIT            -> 0");
+
+    cin(input);
+    op_ = input -> int;
+}
+
+
+

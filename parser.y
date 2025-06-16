@@ -131,7 +131,7 @@ line_non_empty:
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new Dec_func_node($2, &f_table, std::move(body_holder->body));
     }
-    | VAR LPAREN RPAREN ';'{
+    | VAR LPAREN RPAREN ';' {
         $$ = new Execute_node($1, &f_table);
     }
     ;
