@@ -1,9 +1,6 @@
 # POST ORDERED LANGUAGE - POL
 Es un lenguaje de programacion compilado basado en C y C++ donde la notacion para las operaciones -sean logicas o aritmeticas- es postfija.
 
-Para utilizarlo instale el ejecutable pol, escriba su codigo en formato .pol y ejecute por medio del siguiente comando:
-~/ruta$ ./pol ruta/archivo.pol
+Para mas detalles sobre POL, su sintaxis y como utilizarlo accede al siguiente [link](https://nabil-haddad.gitbook.io/nabil-haddad/).
 
-Para recompilar pol, descargue el repositorio y ejejute make:
-~ruta$ make
-
+Para especificaciones sobre su desarrollo puede acceder al informe incluido en el repositorio.
