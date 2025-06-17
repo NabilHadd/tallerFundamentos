@@ -24,10 +24,10 @@ public:
     Value get_value() const;
 
     void set_type(Type t);
-    void set_value(const Value& v); // <-- evitamos copia innecesaria
+    void set_value(const Value& v);
 
-    Symbol_base(Type t, const Value& v); // <-- evitamos copia innecesaria
-    virtual ~Symbol_base(); // <-- solo si planeas heredar
+    Symbol_base(Type t, const Value& v); 
+    virtual ~Symbol_base(); 
 };
 
 #endif

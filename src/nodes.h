@@ -18,6 +18,8 @@ public:
 };
 
 
+
+//Clase para identificar la etiqueta de tipo
 class Type_id {
 private:
     Type id;
@@ -31,7 +33,7 @@ public:
 
 
 
-
+//Clase para transferir un scope.
 class Body_holder_node {
 public:
     std::vector<std::unique_ptr<Statment_node>> body;
@@ -59,6 +61,7 @@ public:
 //Clases statment (funcionalidades basicas)-------------------------------------------------
 
 
+//IF
 class If_node : public Statment_node{
 
     Expr_node* cond;
@@ -70,6 +73,9 @@ public:
     void execute() override;//en este caso execute, siempre que se cumpla la cond deberia llamar al execute de body, recorriendo cada instruccion
 };
 
+
+
+//IF ELSE IF
 class If_else_node : public Statment_node{
     Expr_node* cond;
     std::vector<std::unique_ptr<Statment_node>> body;
@@ -81,6 +87,8 @@ public:
 };
 
 
+
+//IF ELSE
 class If_else_scope_node : public Statment_node{
     Expr_node* cond;
     std::vector<std::unique_ptr<Statment_node>> body;
@@ -91,6 +99,9 @@ public:
     void execute () override;
 };
 
+
+
+//WHILE
 class While_node : public Statment_node{
 
     Expr_node* cond;
@@ -102,6 +113,9 @@ public:
     void execute() override;
 };
 
+
+
+//SALIDA
 class Print_node : public Statment_node{
 private:
     Expr_node* exp;
@@ -111,6 +125,9 @@ public:
     void execute() override;
 };
 
+
+
+//ENTRADA
 class Scan_node : public Statment_node{
 private:
     std::string name;
@@ -122,6 +139,10 @@ public:
 
 };
 
+
+
+
+//EJECUCION DE FUNCIONES
 class Execute_node : public Statment_node{
 private:
     std::string name;
@@ -149,6 +170,8 @@ public:
 
 
 //Declaracion e instancia de variables-----------------------------------------------------------------------------------------------
+
+//DECLARACION DE UNA FUNCION
 class Dec_func_node : public Statment_node{
 private:
     std::string name;//usar unique_ptr al guardar en la tabla
@@ -162,6 +185,8 @@ public:
 };
 
 
+
+//DECLARACION
 class Dec_node : public Statment_node{
 private:
     Type t_id;
@@ -173,6 +198,9 @@ public:
     void execute() override;
 };
 
+
+
+//DECLARACION E INSTANCIACION
 class Dec_ins_node : public Statment_node{
 private:
     Type t_id;
@@ -185,6 +213,9 @@ public:
     void execute() override;
 };
 
+
+
+//INSTANCIACION
 class Ins_node : public Statment_node{
 private:
     std::string name;
@@ -207,8 +238,12 @@ public:
 
 
 
+
+
 //Clases para expresiones---------------------------------------------------------------------------------------------
 
+
+//LECTURA DE CONSTANTES
 class Const_node : public Expr_node {
 private:
     Type t;
@@ -220,6 +255,9 @@ public:
     Value get_value() const override;
 };
 
+
+
+//LECTURA DE VARIABLES
 class Var_node : public Expr_node {
 private:
     std::string name;
@@ -231,6 +269,9 @@ public:
     Value get_value() const override;   
 };
 
+
+
+//CASTEO DE TIPO
 class Parse_node : public Expr_node {
 private:
     Type_id* targ_t;

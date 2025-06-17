@@ -1,6 +1,7 @@
 #include "nodes.h"
 
 
+//FUNCION AUXILIAR PARA CHEQUEO DE TIPPOS
 Type type_cheq(Type t1, Type t2, std::string msg){
     if(t1 == Type::TYPE_INT && t2 == Type::TYPE_INT){
         return t1;    
@@ -52,7 +53,7 @@ Type Type_id::get_id() const{
 
 
 
-//Declarar, Declarar e istanciar , instaciar-------------------------
+//Declarar funciones, Declarar variables, Declarar e istanciar , instaciar-------------------------
 Dec_func_node::Dec_func_node(const std::string&& name, Func_table* table, std::vector<std::unique_ptr<Statment_node>>&& body)
 :name(name), table(table), body(std::move(body)){}
 
@@ -200,7 +201,7 @@ void Ins_node::execute(){
 
 }
     
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 
 
 
@@ -212,10 +213,10 @@ void Ins_node::execute(){
 
 
 
-//Nodo para cuerpo de un scope----------------------------------------
+//Nodo para cuerpo de un scope-----------------------------------------------------------------
 Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&& b)
 : body(std::move(b)){}
-//--------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
 
 
 
@@ -226,7 +227,7 @@ Body_holder_node::Body_holder_node(std::vector<std::unique_ptr<Statment_node>>&&
 
 
 
-//Nodo para cuerpo de un scope----------------------------------------
+//Nodo para cuerpo de un scope------------------------------------------------------------------
 Body_node::Body_node(std::vector<std::unique_ptr<Statment_node>>&& body)
 :body(std::move(body)){}
 
@@ -238,7 +239,7 @@ void Body_node::execute(){
     for (auto&& stmt : body)
         stmt->execute();
 }
-//--------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 
 
 
@@ -270,6 +271,7 @@ void If_node::execute(){
 
 
 
+
 //Nodo para else if statment, no scope--------------------------------------------------------
 If_else_node::If_else_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body, std::unique_ptr<Statment_node> branch){
     this->cond = cond;
@@ -289,6 +291,11 @@ void If_else_node::execute () {
 }
 
 //---------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
@@ -319,6 +326,11 @@ void If_else_scope_node::execute () {
 
 
 
+
+
+
+
+
 //Nodo para el while-----------------------------------------------------------------------------------------------
 
 While_node::While_node(Expr_node* cond, std::vector<std::unique_ptr<Statment_node>>&& body)
@@ -335,6 +347,7 @@ void While_node::execute(){
 
 }
 //------------------------------------------------------------------------------------------------
+
 
 
 
@@ -393,6 +406,8 @@ void Scan_node::execute() {
 
 
 
+
+
 //Nodo para la llamada de una funcion------------------------------------------
 Execute_node::Execute_node(const std::string& name, Func_table* table){
     this->name = name;
@@ -406,6 +421,13 @@ void Execute_node::execute() {
         stmt->execute();
 }
 //-----------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
@@ -437,6 +459,12 @@ Value Var_node::get_value() const {
 }
 
 //----------------------------------------------------------------------------
+
+
+
+
+
+
 
 
 
@@ -516,6 +544,11 @@ Value Parse_node::get_value() const {
 
 
 //-----------------------------------------------------------------------------
+
+
+
+
+
 
 
 
@@ -627,6 +660,18 @@ Value Add_node::get_value()const{
 //-----------------------------------------------------------------------------
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 //Nodo para multiplicacion------------------------------------------------------
 Mul_node::Mul_node(Expr_node* exp1, Expr_node* exp2){
     this->exp1 = exp1;
@@ -680,6 +725,14 @@ Value Mul_node::get_value()const{
 
 
 
+
+
+
+
+
+
+
+
 //Nodo para la division-------------------------------------------------------------------
 Div_node::Div_node(Expr_node* exp1, Expr_node* exp2){
     this->exp1 = exp1;
@@ -728,6 +781,14 @@ Value Div_node::get_value()const{
 }
 
 //-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -786,6 +847,13 @@ Value Sub_node::get_value()const{
 
 
 
+
+
+
+
+
+
+
 //Nodo para elevar----------------------------------------------------------------------
 
 Pow_node::Pow_node(Expr_node* exp1, Expr_node* exp2){
@@ -837,6 +905,17 @@ Value Pow_node::get_value()const{
 
 //--------------------------------------------------------------------------------------
 
+
+
+
+
+
+
+
+
+
+
+
 //Nodo para el not----------------------------------------------------------------------
 Not_node::Not_node(Expr_node* exp1){
     this->exp1 = exp1;
@@ -850,6 +929,16 @@ Value Not_node::get_value() const {
     return (not eval(v1));
 }
 //--------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 //Nodo para las operaciones logicas--------------------------------------------------------

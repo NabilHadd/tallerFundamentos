@@ -77,6 +77,7 @@ Body_node           program;//hay que limpiarlo con delete despues para borrar c
 //Producciones
 
 
+//Simbolo no terminal inicial.
 input: 
     /*vacio*/
     | input line_non_empty {
@@ -84,69 +85,63 @@ input:
     }
     ;
 
+
+//Linea no vacía (instrucciones).
 line_non_empty:
-    type_id VAR ';'                  {
+    type_id VAR ';'                  { //Declaración de una variable.
         $$ = new Dec_node($1->get_id(), $2, &table);
         
     }
-    | type_id VAR INIT exp ';'         {
+    | type_id VAR INIT exp ';'         { //Declaracion e instanciación.
         $$ = new Dec_ins_node($1->get_id(), $2, $4, &table);
         
     }
-    | VAR INIT exp ';'                 {
+    | VAR INIT exp ';'                 { //Inicialización de una variable.
         $$ = new Ins_node($1, $3, &table);
 
     }
-    | IF LPAREN exp RPAREN scope    {
+    | IF LPAREN exp RPAREN scope    { // INstrucción If
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new If_node($3, std::move(body_holder->body));
         delete body_holder;
 
     }
-    | IF LPAREN exp RPAREN scope ELSE line_non_empty    {
+    | IF LPAREN exp RPAREN scope ELSE line_non_empty    { //Instruccion If con else e instruccion asociada
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new If_else_node($3, std::move(body_holder->body), std::unique_ptr<Statment_node>($7));
         delete body_holder;
     }
-    | IF LPAREN exp RPAREN scope ELSE scope  {
+    | IF LPAREN exp RPAREN scope ELSE scope  { //Instruccion IF con else y scope asociado
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         auto branch_holder = dynamic_cast<Body_holder_node*>($7);
         $$ = new If_else_scope_node($3, std::move(body_holder->body), std::move(branch_holder->body));
         delete body_holder;
         delete branch_holder;
     }
-    | WHILE LPAREN exp RPAREN scope  {
+    | WHILE LPAREN exp RPAREN scope  { //INstrucción while
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new While_node($3, std::move(body_holder->body));
         delete body_holder;
     }
-    | PRINT LPAREN exp RPAREN ';'      {
+    | PRINT LPAREN exp RPAREN ';'      { //Salida por consola
         $$ = new Print_node($3);
 
     }
-    | SCAN LPAREN VAR RPAREN ';'        {
+    | SCAN LPAREN VAR RPAREN ';'        {//Lectura de consola
         $$ = new Scan_node($3, &table);    
     }
-    | ARROW VAR LPAREN RPAREN scope {
+    | ARROW VAR LPAREN RPAREN scope { //Declaración de una función.
         auto body_holder = dynamic_cast<Body_holder_node*>($5);
         $$ = new Dec_func_node($2, &f_table, std::move(body_holder->body));
     }
-    | VAR LPAREN RPAREN ';' {
+    | VAR LPAREN RPAREN ';' { //Llamada de una función.
         $$ = new Execute_node($1, &f_table);
     }
     ;
 
 
-/*line:
-    '\n'
-    | line_non_empty {
-        $1->execute();        
-    }
-    ;*/
-    
 
-
-
+//Expresiones: aritmeitcas, logicas y lectura de valores
 exp:
     NUM                     { 
         $$ = new Const_node(Type::TYPE_DOUBLE, $1);                
@@ -191,10 +186,10 @@ exp:
 
         $$ = new Pow_node($1, $2); 
     }
-    //| exp INCP              { $$ = ++$1; }
-    //| exp POSTINC           { $$ = $1++; }
     ;
 
+
+//Operaciones logicas
 L_op: 
     EQ {
         $$ = new Logic_op(Logic::IS_EQ);
@@ -219,6 +214,8 @@ L_op:
     }
     ;
 
+
+//Etiqueta de tipo
 type_id: 
     INT         {
         $$ = new Type_id(Type::TYPE_INT);
@@ -231,6 +228,8 @@ type_id:
     }
     ;
 
+
+//Conjunto de instrucciones.
 scoped_lines:
     line_non_empty          {
         $$ = new std::vector<Statment_node*>();
@@ -241,6 +240,8 @@ scoped_lines:
         $$ = $1;
     }
     ;
+
+//Conjunto de lineas con llaves.
 scope:
     LBRACE scoped_lines RBRACE {
         std::vector<std::unique_ptr<Statment_node>> body;
@@ -253,6 +254,7 @@ scope:
 
 %%
 
+//Definición de funciones
 bool try_parse_s(const std::string& input, Type t){
     Value out_val;
     try{

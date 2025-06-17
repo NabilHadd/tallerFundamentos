@@ -8,6 +8,8 @@
 #include <vector>
 #include <cmath>
 
+
+//Clase para enumerar las operaciones logicas.
 enum class Logic {
     IS_EQ,
     IS_GR,
@@ -18,25 +20,35 @@ enum class Logic {
     AND_
 };
 
-//void print_value(Value v);
+
+
+
+//Metodos generales utilizados por diferentes scripts
 bool eval(Value v);
 std::string to_string_value(Type t, const Value& v);
 int yyerror(const char* s);
 bool try_parse_s(const std::string& input, Type t);
 
+
+
+//Nodo base
 class Node {
 public:
-    virtual void execute() = 0; //nodo base, de aqui nacen todos los demas.
+    virtual void execute() = 0;
     virtual ~Node() = default; 
 
 };
 
 
 
-class Statment_node : public Node { //nodo statment, almacena una instruccion
+
+//Nodo base para los statments
+class Statment_node : public Node {
 };
 
 
+
+//Nodo base para las expresiones.
 class Expr_node {
 public:
     virtual Value get_value() const = 0;
@@ -46,6 +58,8 @@ public:
 };
 
 
+
+//Nodo acumulador de statments.
 class Body_node : public Statment_node {
 
 
